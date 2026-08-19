@@ -61,6 +61,13 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
 
         renderMiLista(miLista, onQuitar, onVerDetalle);
         actualizarBotonesMiLista(miLista, catalogo.todos);
+
+        const btnMiListaDetalle = document.querySelector('.btn-mi-lista-detalle') as HTMLElement;
+        if (btnMiListaDetalle) {
+            btnMiListaDetalle.textContent = miLista.contiene(contenido) ? '✓ En lista' : '+ Mi lista';
+            btnMiListaDetalle.classList.toggle('active', miLista.contiene(contenido));
+        }
+
         guardarTodo();
     };
 
@@ -88,8 +95,9 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
 
     const onVerDetalle = (contenido: Contenido) => {
         (window as any).contenidoActual = contenido;
-        renderDetalleContenido(contenido, onReproducir, onToggleLista);
+        renderDetalleContenido(contenido, onReproducir, onToggleLista, miLista);
         switchTab('detalle');
+        actualizarBotonesMiLista(miLista, catalogo.todos);
     };
 
     const onEliminar = (contenido: Contenido) => {

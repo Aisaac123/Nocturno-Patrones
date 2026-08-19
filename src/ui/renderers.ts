@@ -151,7 +151,7 @@ export function renderMiLista(
     log('AGREGACIÓN', `Renderizando lista de reproducción con ${items.length} contenidos`);
 }
 
-export function renderDetalleContenido(contenido: Contenido, onReproducirDetalle?: (contenido: Contenido) => void, onToggleListaDetalle?: (contenido: Contenido) => void): void {
+export function renderDetalleContenido(contenido: Contenido, onReproducirDetalle?: (contenido: Contenido) => void, onToggleListaDetalle?: (contenido: Contenido) => void, miLista?: { contiene: (contenido: Contenido) => boolean }): void {
     const container = document.getElementById('detalle-content');
     if (!container) return;
 
@@ -198,7 +198,7 @@ export function renderDetalleContenido(contenido: Contenido, onReproducirDetalle
 
         <div class="detalle-actions">
             <button class="btn btn-primary btn-reproducir-detalle">▶ Reproducir</button>
-            <button class="btn btn-secondary btn-mi-lista-detalle">+ Mi lista</button>
+            <button class="btn btn-secondary btn-mi-lista-detalle">${miLista && miLista.contiene(contenido) ? '✓ En lista' : '+ Mi lista'}</button>
         </div>
     `;
 
@@ -278,7 +278,13 @@ export function renderDetalleContenido(contenido: Contenido, onReproducirDetalle
 
     const btnMiListaDetalle = container.querySelector('.btn-mi-lista-detalle') as HTMLElement;
     if (btnMiListaDetalle && onToggleListaDetalle) {
-        btnMiListaDetalle.addEventListener('click', () => onToggleListaDetalle(contenido));
+        btnMiListaDetalle.addEventListener('click', () => {
+            onToggleListaDetalle(contenido);
+            if (miLista) {
+                btnMiListaDetalle.textContent = miLista.contiene(contenido) ? '✓ En lista' : '+ Mi lista';
+                btnMiListaDetalle.classList.toggle('active', miLista.contiene(contenido));
+            }
+        });
     }
 
     const episodiosInteractivos = container.querySelectorAll('.episodio-interactivo');
