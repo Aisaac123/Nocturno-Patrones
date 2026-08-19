@@ -44,6 +44,7 @@ export function generarYoutubeEmbed(videoId: string): string {
     return `
         <div class="youtube-container">
             <iframe
+                class="youtube-iframe"
                 src="https://www.youtube.com/embed/${videoId}"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
