@@ -1,58 +1,45 @@
 import { formatearDuracion, formatearEstrellas, formatearTipo, formatearNumero, extraerYoutubeId, generarYoutubeEmbed, obtenerColorTipo } from '../utils/formatters';
 import { log } from '../utils/logger';
+import { Contenido } from '../domain/Contenido';
+import { Pelicula } from '../domain/Pelicula';
+import { Serie } from '../domain/Serie';
+import { Documental } from '../domain/Documental';
+import { Temporada } from '../domain/Temporada';
+import { Episodio } from '../domain/Episodio';
 
 /**
  * UI - Renderers
  *
- * DEMUESTRA:
- * - SEPARACIÓN DE RESPONSABILIDADES: Lógica de presentación separada
- *   del dominio
- *
  * RESPONSABILIDAD: Renderizar la interfaz de usuario
  */
-
-/**
- * Renderiza el catálogo completo
- * @param catalogo - Instancia del catálogo
- * @param onReproducir - Callback para acción de reproducir
- * @param onToggleLista - Callback para toggle de mi lista
- * @param onCalificar - Callback para calificar
- * @param onVerDetalle - Callback para ver detalle
- * @param onEliminar - Callback para eliminar
- */
 export function renderCatalogo(
-    catalogo: any,
-    onReproducir: (contenido: any) => void,
-    onToggleLista: (contenido: any) => void,
-    onCalificar: (contenido: any, estrellas: number) => void,
-    onVerDetalle: (contenido: any) => void,
-    onEliminar: (contenido: any) => void
+    catalogo: { todos: Contenido[] },
+    onReproducir: (contenido: Contenido) => void,
+    onToggleLista: (contenido: Contenido) => void,
+    onCalificar: (contenido: Contenido, estrellas: number) => void,
+    onVerDetalle: (contenido: Contenido) => void,
+    onEliminar: (contenido: Contenido) => void
 ): void {
     const grid = document.getElementById('catalogo-grid');
     if (!grid) return;
 
     grid.innerHTML = '';
 
-    const contenidos = catalogo.todos;
-
-    contenidos.forEach((contenido: any) => {
+    catalogo.todos.forEach((contenido: Contenido) => {
         const card = renderCard(contenido, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
         grid.appendChild(card);
     });
 
-    log('ABSTRACCIÓN', `Renderizando catálogo con ${contenidos.length} contenidos usando interfaz común`);
+    log('ABSTRACCIÓN', `Renderizando catálogo con ${catalogo.todos.length} contenidos`);
 }
 
-/**
- * Renderiza una card individual de contenido
- */
 function renderCard(
-    contenido: any,
-    onReproducir: (contenido: any) => void,
-    onToggleLista: (contenido: any) => void,
-    onCalificar: (contenido: any, estrellas: number) => void,
-    onVerDetalle: (contenido: any) => void,
-    onEliminar: (contenido: any) => void
+    contenido: Contenido,
+    onReproducir: (contenido: Contenido) => void,
+    onToggleLista: (contenido: Contenido) => void,
+    onCalificar: (contenido: Contenido, estrellas: number) => void,
+    onVerDetalle: (contenido: Contenido) => void,
+    onEliminar: (contenido: Contenido) => void
 ): HTMLElement {
     const card = document.createElement('div');
     card.className = 'card';
@@ -65,15 +52,13 @@ function renderCard(
     const vistas = formatearNumero(contenido.totalVistas);
     const colorTipo = obtenerColorTipo(contenido.tipo);
 
-    console.log(`Renderizando card "${contenido.titulo}":`, { promedio, estrellas, votos });
-
     card.innerHTML = `
         <div class="card-header">
             <span class="card-type" style="background-color: ${colorTipo};">${tipo}</span>
             <span class="card-year">${contenido.anio}</span>
         </div>
         <h3 class="card-title">${contenido.titulo}</h3>
-        <p class="card-synopsis">${contenido.sinopsis}</p>
+        <p class="card-sinopsis">${contenido.sinopsisPublica}</p>
         <div class="card-meta">
             <span class="card-duration">⏱ ${duracion}</span>
             <div class="card-rating">
@@ -93,7 +78,6 @@ function renderCard(
         </div>
     `;
 
-    // Event listeners
     const btnReproducir = card.querySelector('.btn-reproducir') as HTMLElement;
     btnReproducir.addEventListener('click', () => onReproducir(contenido));
 
@@ -117,13 +101,11 @@ function renderCard(
     return card;
 }
 
-/**
- * Renderiza la lista de reproducción del usuario
- * @param lista - Instancia de ListaDeReproduccion
- * @param onQuitar - Callback para quitar de la lista
- * @param onVerDetalle - Callback para ver detalle
- */
-export function renderMiLista(lista: any, onQuitar: (contenido: any) => void, onVerDetalle: (contenido: any) => void): void {
+export function renderMiLista(
+    lista: { contiene: (contenido: Contenido) => boolean; getItems: () => Contenido[] },
+    onQuitar: (contenido: Contenido) => void,
+    onVerDetalle: (contenido: Contenido) => void
+): void {
     const container = document.getElementById('mi-lista-content');
     if (!container) return;
 
@@ -139,7 +121,7 @@ export function renderMiLista(lista: any, onQuitar: (contenido: any) => void, on
     const listaContainer = document.createElement('div');
     listaContainer.className = 'lista-items';
 
-    items.forEach((contenido: any) => {
+    items.forEach((contenido: Contenido) => {
         const item = document.createElement('div');
         item.className = 'lista-item';
         item.innerHTML = `
@@ -166,14 +148,10 @@ export function renderMiLista(lista: any, onQuitar: (contenido: any) => void, on
 
     container.appendChild(listaContainer);
 
-    log('AGREGACIÓN', `Renderizando lista de reproducción con ${items.length} contenidos (referencias sin propiedad)`);
+    log('AGREGACIÓN', `Renderizando lista de reproducción con ${items.length} contenidos`);
 }
 
-/**
- * Renderiza el detalle de un contenido en la página específica
- * @param contenido - Instancia de Contenido
- */
-export function renderDetalleContenido(contenido: any): void {
+export function renderDetalleContenido(contenido: Contenido): void {
     const container = document.getElementById('detalle-content');
     if (!container) return;
 
@@ -201,7 +179,7 @@ export function renderDetalleContenido(contenido: any): void {
 
         ${youtubeEmbed ? youtubeEmbed : '<p style="color: var(--text-secondary); font-style: italic;">No hay video disponible</p>'}
 
-        <p class="detalle-sinopsis">${contenido.sinopsis}</p>
+        <p class="detalle-sinopsis">${contenido.sinopsisPublica}</p>
 
         <div class="detalle-info-grid">
             <div class="detalle-info-item">
@@ -224,12 +202,11 @@ export function renderDetalleContenido(contenido: any): void {
         </div>
     `;
 
-    // Campos específicos según tipo
-    if (contenido.tipo === 'Película' && contenido.director) {
+    if (contenido.tipo === 'Película' && (contenido as Pelicula).director) {
         html += `
             <div class="detalle-info-item">
                 <div class="detalle-info-label">Director</div>
-                <div class="detalle-info-value">${contenido.director}</div>
+                <div class="detalle-info-value">${(contenido as Pelicula).director}</div>
             </div>
         `;
     }
@@ -238,22 +215,22 @@ export function renderDetalleContenido(contenido: any): void {
         html += `
             <div class="detalle-info-item">
                 <div class="detalle-info-label">Creador</div>
-                <div class="detalle-info-value">${contenido.creador}</div>
+                <div class="detalle-info-value">${(contenido as Serie).creador}</div>
             </div>
             <div class="detalle-info-item">
                 <div class="detalle-info-label">Temporadas</div>
-                <div class="detalle-info-value">${contenido.totalTemporadas}</div>
+                <div class="detalle-info-value">${(contenido as Serie).totalTemporadas}</div>
             </div>
         `;
 
-        const temporadas = contenido.obtenerTemporadas();
-        temporadas.forEach((temporada: any) => {
+        const temporadas = (contenido as Serie).obtenerTemporadas();
+        temporadas.forEach((temporada: Temporada) => {
             const episodios = temporada.getEpisodios();
             html += `
                 <div class="temporada">
                     <h4 class="temporada-header">Temporada ${temporada.numero} - ${formatearDuracion(temporada.duracionMin)}</h4>
                     <ul class="episodios-list">
-                        ${episodios.map((ep: any) => `
+                        ${episodios.map((ep: Episodio) => `
                             <li class="episodio-item">
                                 Episodio ${ep.numero}: ${ep.titulo} (${ep.duracionMin}m)
                             </li>
@@ -263,28 +240,26 @@ export function renderDetalleContenido(contenido: any): void {
             `;
         });
 
-        log('COMPOSICIÓN', `Renderizando detalle de serie con ${temporadas.length} temporadas (ciclo de vida compartido)`);
+        log('COMPOSICIÓN', `Renderizando detalle de serie con ${temporadas.length} temporadas`);
     }
 
     if (contenido.tipo === 'Documental') {
         html += `
             <div class="detalle-info-item">
                 <div class="detalle-info-label">Tema</div>
-                <div class="detalle-info-value">${contenido.tema}</div>
+                <div class="detalle-info-value">${(contenido as Documental).tema}</div>
             </div>
             <div class="detalle-info-item">
                 <div class="detalle-info-label">Investigador</div>
-                <div class="detalle-info-value">${contenido.investigador}</div>
+                <div class="detalle-info-value">${(contenido as Documental).investigador}</div>
             </div>
         `;
     }
 
     container.innerHTML = html;
 
-    // Event listener para volver
     const btnVolver = container.querySelector('.btn-volver') as HTMLElement;
     btnVolver.addEventListener('click', () => {
-        // Cambiar al tab de catálogo manualmente
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
         });
@@ -298,13 +273,11 @@ export function renderDetalleContenido(contenido: any): void {
     log('POLIMORFISMO', `Renderizando detalle de ${contenido.tipo}: ${contenido.titulo}`);
 }
 
-/**
- * Actualiza el estado visual de los botones de "Mi lista"
- * @param lista - Instancia de ListaDeReproduccion
- * @param contenidos - Todos los contenidos del catálogo
- */
-export function actualizarBotonesMiLista(lista: any, contenidos: any[]): void {
-    contenidos.forEach((contenido: any) => {
+export function actualizarBotonesMiLista(
+    lista: { contiene: (contenido: Contenido) => boolean },
+    contenidos: Contenido[]
+): void {
+    contenidos.forEach((contenido: Contenido) => {
         const cards = document.querySelectorAll('.card');
         cards.forEach(card => {
             const titulo = card.querySelector('.card-title')?.textContent;
