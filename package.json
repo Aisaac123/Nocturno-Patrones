@@ -1,0 +1,22 @@
+{
+  "name": "nocturno",
+  "version": "1.0.0",
+  "description": "Mini plataforma de streaming en TypeScript vanilla demostrando POO y UML",
+  "main": "index.html",
+  "scripts": {
+    "build": "tsc && esbuild dist/main.js --bundle --outfile=dist/bundle.js --target=es2020 --format=iife",
+    "watch": "tsc --watch"
+  },
+  "keywords": [
+    "typescript",
+    "poo",
+    "uml",
+    "streaming"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "^5.3.3"
+  }
+}

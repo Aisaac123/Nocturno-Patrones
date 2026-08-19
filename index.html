@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturno - Streaming Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1 class="logo">Nocturno<span>.</span></h1>
+            <nav class="tabs">
+                <button class="tab active" data-tab="catalogo">Catálogo</button>
+                <button class="tab" data-tab="agregar">Agregar</button>
+                <button class="tab" data-tab="mi-lista">Mi Lista</button>
+                <button class="tab" data-tab="bitacora">Bitácora</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div id="catalogo" class="tab-content active">
+            <div id="catalogo-grid" class="catalogo-grid"></div>
+        </div>
+
+        <div id="agregar" class="tab-content">
+            <div class="form-section">
+                <h2 style="margin-bottom: 1.5rem; color: var(--text-primary);">Agregar Contenido</h2>
+                <div class="form-group">
+                    <label for="tipo-contenido">Tipo de Contenido</label>
+                    <select id="tipo-contenido" name="tipo">
+                        <option value="pelicula">Película</option>
+                        <option value="serie">Serie</option>
+                        <option value="documental">Documental</option>
+                    </select>
+                </div>
+
+                <form id="form-pelicula">
+                    <div class="form-group">
+                        <label for="titulo">Título</label>
+                        <input type="text" id="titulo" name="titulo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="anio">Año</label>
+                        <input type="number" id="anio" name="anio" min="1900" max="2099" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sinopsis">Sinopsis</label>
+                        <textarea id="sinopsis" name="sinopsis" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="duracion">Duración (minutos)</label>
+                        <input type="number" id="duracion" name="duracion" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="director">Director</label>
+                        <input type="text" id="director" name="director" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Película</button>
+                </form>
+
+                <form id="form-serie" style="display: none;">
+                    <div class="form-group">
+                        <label for="serie-titulo">Título</label>
+                        <input type="text" id="serie-titulo" name="titulo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serie-anio">Año</label>
+                        <input type="number" id="serie-anio" name="anio" min="1900" max="2099" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serie-sinopsis">Sinopsis</label>
+                        <textarea id="serie-sinopsis" name="sinopsis" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="creador">Creador</label>
+                        <input type="text" id="creador" name="creador" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Serie</button>
+                </form>
+
+                <form id="form-documental" style="display: none;">
+                    <div class="form-group">
+                        <label for="doc-titulo">Título</label>
+                        <input type="text" id="doc-titulo" name="titulo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc-anio">Año</label>
+                        <input type="number" id="doc-anio" name="anio" min="1900" max="2099" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc-sinopsis">Sinopsis</label>
+                        <textarea id="doc-sinopsis" name="sinopsis" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc-duracion">Duración (minutos)</label>
+                        <input type="number" id="doc-duracion" name="duracion" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tema">Tema</label>
+                        <input type="text" id="tema" name="tema" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="investigador">Investigador</label>
+                        <input type="text" id="investigador" name="investigador" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Documental</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="mi-lista" class="tab-content">
+            <div id="mi-lista-content" class="mi-lista-content"></div>
+        </div>
+
+        <div id="detalle" class="tab-content">
+            <div id="detalle-content" class="detalle-content"></div>
+        </div>
+
+        <div id="bitacora" class="tab-content">
+            <div id="bitacora-content" class="bitacora-content"></div>
+        </div>
+    </main>
+
+    <script src="dist/bundle.js"></script>
+</body>
+</html>
