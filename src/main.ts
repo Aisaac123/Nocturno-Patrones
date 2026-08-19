@@ -143,6 +143,16 @@ function main(): void {
         });
     }
 
+    const btnResetDatos = document.getElementById('btn-reset-datos');
+    if (btnResetDatos) {
+        btnResetDatos.addEventListener('click', () => {
+            if (confirm('¿Estás seguro de resetear todos los datos? Se eliminará todo el catálogo, usuario y lista personal.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        });
+    }
+
     log('ABSTRACCIÓN', 'Aplicación iniciada usando interfaz común de Contenido');
     console.log('Nocturno - Aplicación inicializada correctamente');
 }
