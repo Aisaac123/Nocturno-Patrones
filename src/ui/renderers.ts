@@ -151,7 +151,7 @@ export function renderMiLista(
     log('AGREGACIÓN', `Renderizando lista de reproducción con ${items.length} contenidos`);
 }
 
-export function renderDetalleContenido(contenido: Contenido): void {
+export function renderDetalleContenido(contenido: Contenido, onReproducirDetalle?: (contenido: Contenido) => void, onToggleListaDetalle?: (contenido: Contenido) => void): void {
     const container = document.getElementById('detalle-content');
     if (!container) return;
 
@@ -231,8 +231,9 @@ export function renderDetalleContenido(contenido: Contenido): void {
                     <h4 class="temporada-header">Temporada ${temporada.numero} - ${formatearDuracion(temporada.duracionMin)}</h4>
                     <ul class="episodios-list">
                         ${episodios.map((ep: Episodio) => `
-                            <li class="episodio-item">
-                                Episodio ${ep.numero}: ${ep.titulo} (${ep.duracionMin}m)
+                            <li class="episodio-item episodio-interactivo" data-titulo="${ep.titulo}" data-url="${(ep as any).youtubeUrl || ''}">
+                                <span class="episodio-info">Episodio ${ep.numero}: ${ep.titulo} (${ep.duracionMin}m)</span>
+                                ${(ep as any).youtubeUrl ? '<span class="episodio-play">▶</span>' : ''}
                             </li>
                         `).join('')}
                     </ul>
@@ -268,6 +269,31 @@ export function renderDetalleContenido(contenido: Contenido): void {
         });
         document.getElementById('catalogo')?.classList.add('active');
         document.querySelector('[data-tab="catalogo"]')?.classList.add('active');
+    });
+
+    const btnReproducirDetalle = container.querySelector('.btn-reproducir-detalle') as HTMLElement;
+    if (btnReproducirDetalle && onReproducirDetalle) {
+        btnReproducirDetalle.addEventListener('click', () => onReproducirDetalle(contenido));
+    }
+
+    const btnMiListaDetalle = container.querySelector('.btn-mi-lista-detalle') as HTMLElement;
+    if (btnMiListaDetalle && onToggleListaDetalle) {
+        btnMiListaDetalle.addEventListener('click', () => onToggleListaDetalle(contenido));
+    }
+
+    const episodiosInteractivos = container.querySelectorAll('.episodio-interactivo');
+    episodiosInteractivos.forEach(ep => {
+        ep.addEventListener('click', () => {
+            const url = (ep as HTMLElement).dataset.url;
+            if (url) {
+                const youtubeId = extraerYoutubeId(url);
+                const youtubeEmbed = youtubeId ? generarYoutubeEmbed(youtubeId) : '';
+                const playerContainer = container.querySelector('.youtube-container');
+                if (youtubeEmbed && playerContainer) {
+                    playerContainer.innerHTML = youtubeEmbed;
+                }
+            }
+        });
     });
 
     log('POLIMORFISMO', `Renderizando detalle de ${contenido.tipo}: ${contenido.titulo}`);

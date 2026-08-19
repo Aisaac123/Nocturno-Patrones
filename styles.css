@@ -456,6 +456,29 @@ main {
     border-bottom: none;
 }
 
+.episodio-interactivo {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.episodio-interactivo:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.episodio-info {
+    flex: 1;
+}
+
+.episodio-play {
+    color: var(--accent);
+    font-size: 1.2rem;
+    margin-left: 1rem;
+}
+
 /* Bitácora */
 .bitacora-content {
     background-color: var(--bg-secondary);

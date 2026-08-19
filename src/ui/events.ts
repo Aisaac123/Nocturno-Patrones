@@ -44,7 +44,7 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         log('POLIMORFISMO', resultado);
 
         (window as any).contenidoActual = contenido;
-        renderDetalleContenido(contenido);
+        renderDetalleContenido(contenido, onReproducir, onToggleLista);
         switchTab('detalle');
         renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
         guardarTodo();
@@ -88,7 +88,7 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
 
     const onVerDetalle = (contenido: Contenido) => {
         (window as any).contenidoActual = contenido;
-        renderDetalleContenido(contenido);
+        renderDetalleContenido(contenido, onReproducir, onToggleLista);
         switchTab('detalle');
     };
 

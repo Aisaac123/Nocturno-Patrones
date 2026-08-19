@@ -87,6 +87,7 @@ function main(): void {
         btnAgregarEpisodio.addEventListener('click', () => {
             const episodioTitulo = (document.getElementById('episodio-titulo') as HTMLInputElement).value;
             const episodioDuracion = parseInt((document.getElementById('episodio-duracion') as HTMLInputElement).value);
+            const episodioYoutube = (document.getElementById('episodio-youtube') as HTMLInputElement).value;
 
             if (!episodioTitulo || !episodioDuracion) {
                 alert('Por favor ingresa título y duración del episodio');
@@ -102,11 +103,13 @@ function main(): void {
             episodios.push({
                 numero: numeroEpisodio,
                 titulo: episodioTitulo,
-                duracionMin: episodioDuracion
+                duracionMin: episodioDuracion,
+                youtubeUrl: episodioYoutube
             });
 
             (document.getElementById('episodio-titulo') as HTMLInputElement).value = '';
             (document.getElementById('episodio-duracion') as HTMLInputElement).value = '';
+            (document.getElementById('episodio-youtube') as HTMLInputElement).value = '';
 
             actualizarPreviewEpisodios();
             log('COMPOSICIÓN', `Episodio ${numeroEpisodio} agregado a temporada temporal`);

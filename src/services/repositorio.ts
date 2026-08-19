@@ -86,7 +86,8 @@ export class Repositorio {
                 episodios: t.getEpisodios().map(e => ({
                     numero: e.numero,
                     titulo: e.titulo,
-                    duracionMin: e.duracionMin
+                    duracionMin: e.duracionMin,
+                    youtubeUrl: (e as any).youtubeUrl || ''
                 }))
             }));
             return {
@@ -140,7 +141,7 @@ export class Repositorio {
                 dto.temporadas.forEach((tDto: any) => {
                     const temporada = serie.agregarTemporada(tDto.numero);
                     tDto.episodios.forEach((eDto: any) => {
-                        temporada.agregarEpisodio(new Episodio(eDto.numero, eDto.titulo, eDto.duracionMin));
+                        temporada.agregarEpisodio(new Episodio(eDto.numero, eDto.titulo, eDto.duracionMin, eDto.youtubeUrl || ''));
                     });
                 });
                 this.restaurarCalificaciones(serie, dto.calificaciones);
