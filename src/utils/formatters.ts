@@ -45,7 +45,7 @@ export function generarYoutubeEmbed(videoId: string): string {
         <div class="youtube-container">
             <iframe
                 class="youtube-iframe"
-                src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1"
+                src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&enablejsapi=0"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
