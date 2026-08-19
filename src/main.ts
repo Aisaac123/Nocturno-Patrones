@@ -134,7 +134,8 @@ function main(): void {
             });
 
             (window as any).episodiosTemporales = [];
-            (document.getElementById('numero-temporada') as HTMLInputElement).value = String(numeroTemporada + 1);
+            (document.getElementById('episodio-titulo') as HTMLInputElement).value = '';
+            (document.getElementById('episodio-duracion') as HTMLInputElement).value = '';
 
             actualizarPreviewEpisodios();
             actualizarPreviewTemporadas();

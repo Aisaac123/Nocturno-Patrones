@@ -7,14 +7,6 @@ import { ListaDeReproduccion } from './domain/ListaDeReproduccion';
 import { Catalogo } from './domain/Catalogo';
 import { Repositorio } from './services/repositorio';
 
-/**
- * SEED DATA
- *
- * DEMUESTRA:
- * - DATOS DE EJEMPLO: Crea instancias de todas las clases
- *
- * RESPONSABILIDAD: Proporcionar datos iniciales para la aplicación
- */
 export function crearDatos(repositorio: Repositorio) {
     const catalogoGuardado = repositorio.cargarCatalogo();
     const usuarioGuardado = repositorio.cargarUsuario();
@@ -32,48 +24,48 @@ export function crearDatos(repositorio: Repositorio) {
     const catalogo = new Catalogo();
 
     const pelicula1 = new Pelicula(
-        'El Silencio de la Noche',
-        2023,
-        'Un thriller psicológico sobre un detective que persigue a un asesino en serie en una ciudad que nunca duerme.',
-        142,
-        'María González',
-        'https://www.youtube.com/watch?v=jNQXAC9IVRw'
+        'The Matrix',
+        1999,
+        'Un hacker descubre que el mundo que conoce es una simulación creada por máquinas inteligentes.',
+        136,
+        'Lana Wachowski, Lilly Wachowski',
+        'https://www.youtube.com/watch?v=vKQi3bBA1y8' // Trailer oficial
     );
 
     const pelicula2 = new Pelicula(
-        'Horizontes Lejanos',
-        2021,
-        'Una aventura épica de ciencia ficción sobre la colonización de Marte y los desafíos humanos en el espacio.',
-        178,
-        'Carlos Rodríguez',
-        'https://www.youtube.com/watch?v=9bZkp7q19f0'
+        'Inception',
+        2010,
+        'Un ladrón que roba secretos corporativos a través del uso de tecnología de compartir sueños.',
+        148,
+        'Christopher Nolan',
+        'https://www.youtube.com/watch?v=YoHD9XEInc0' // Trailer oficial
     );
 
     const serie = new Serie(
-        'Sombras del Pasado',
-        2022,
-        'Un drama histórico que sigue a una familia a través de tres generaciones, revelando secretos ocultos y traiciones.',
-        'Ana Martínez',
-        'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        'Breaking Bad',
+        2008,
+        'Un profesor de química de secundaria con cáncer terminal se convierte en fabricante de metanfetamina.',
+        'Vince Gilligan',
+        'https://www.youtube.com/watch?v=HhesaQXLuRY' // Tráiler oficial
     );
 
     const temporada1 = serie.agregarTemporada(1);
-    temporada1.agregarEpisodio(new Episodio(1, 'El Comienzo', 45));
-    temporada1.agregarEpisodio(new Episodio(2, 'Secretos Revelados', 48));
-    temporada1.agregarEpisodio(new Episodio(3, 'La Primera Traición', 52));
+    temporada1.agregarEpisodio(new Episodio(1, 'Pilot', 49));
+    temporada1.agregarEpisodio(new Episodio(2, 'Cat\'s in the Bag...', 48));
+    temporada1.agregarEpisodio(new Episodio(3, '...And the Bag\'s in the River', 46));
 
     const temporada2 = serie.agregarTemporada(2);
-    temporada2.agregarEpisodio(new Episodio(1, 'Consecuencias', 50));
-    temporada2.agregarEpisodio(new Episodio(2, 'Redención', 55));
+    temporada2.agregarEpisodio(new Episodio(1, 'Seven Thirty-Seven', 48));
+    temporada2.agregarEpisodio(new Episodio(2, 'Grilled', 43));
 
     const documental = new Documental(
-        'Océanos Profundos',
-        2024,
-        'Un viaje visual a las profundidades de los océanos, explorando ecosistemas desconocidos y especies nunca antes vistas.',
-        95,
-        'Vida Marina',
-        'Dr. Roberto Sánchez',
-        'https://www.youtube.com/watch?v=h0B9zQ8j5-Y'
+        'Planet Earth',
+        2006,
+        'Serie documental que explora la diversidad de vida en nuestro planeta.',
+        600,
+        'Naturaleza y Vida Silvestre',
+        'BBC Natural History Unit',
+        'https://www.youtube.com/watch?v=JkaxUblCGz0' // Tráiler oficial
     );
 
     catalogo.agregar(pelicula1);
@@ -83,14 +75,14 @@ export function crearDatos(repositorio: Repositorio) {
 
     const miLista = new ListaDeReproduccion('Mi Lista', usuario);
 
-    pelicula1.calificar(4);
     pelicula1.calificar(5);
-    pelicula2.calificar(3);
+    pelicula1.calificar(5);
+    pelicula2.calificar(5);
     pelicula2.calificar(4);
     pelicula2.calificar(5);
     serie.calificar(5);
     serie.calificar(5);
-    documental.calificar(4);
+    documental.calificar(5);
 
     repositorio.guardarCatalogo(catalogo);
     repositorio.guardarUsuario(usuario);

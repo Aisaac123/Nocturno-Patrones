@@ -228,11 +228,12 @@ export const actualizarPreviewEpisodios = (): void => {
     if (!preview) return;
 
     if (episodiosTemporales.length === 0) {
-        preview.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem;">Episodios de esta temporada: Ninguno</span>';
+        preview.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem;">Sin episodios</span>';
     } else {
         preview.innerHTML = episodiosTemporales.map((e: any, i: number) =>
-            `<div style="color: var(--text-primary); font-size: 0.85rem; padding: 0.25rem 0;">
-                ${i + 1}. ${e.titulo} (${e.duracionMin}m)
+            `<div style="display: flex; justify-content: space-between; align-items: center; color: var(--text-primary); font-size: 0.85rem; padding: 0.25rem 0; border-bottom: 1px solid var(--border);">
+                <span>${i + 1}. ${e.titulo} (${e.duracionMin}m)</span>
+                <button type="button" onclick="eliminarEpisodioTemp(${i})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1rem;">×</button>
             </div>`
         ).join('');
     }
@@ -246,15 +247,30 @@ export const actualizarPreviewTemporadas = (): void => {
     if (temporadasTemporales.length === 0) {
         preview.innerHTML = '';
     } else {
-        preview.innerHTML = temporadasTemporales.map((t: any) =>
-            `<div style="background-color: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;">
-                <strong style="color: var(--text-primary);">Temporada ${t.numero}</strong>
+        preview.innerHTML = temporadasTemporales.map((t: any, i: number) =>
+            `<div style="background-color: var(--bg-secondary); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong style="color: var(--text-primary);">Temporada ${t.numero}</strong>
+                    <button type="button" onclick="eliminarTemporadaTemp(${i})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1rem;">×</button>
+                </div>
                 <div style="color: var(--text-secondary); font-size: 0.85rem;">
-                    ${t.episodios.length} episodios
+                    ${t.episodios.length} episodio${t.episodios.length !== 1 ? 's' : ''}
                 </div>
             </div>`
         ).join('');
     }
+};
+
+(window as any).eliminarEpisodioTemp = (index: number): void => {
+    const episodios = (window as any).episodiosTemporales || [];
+    episodios.splice(index, 1);
+    actualizarPreviewEpisodios();
+};
+
+(window as any).eliminarTemporadaTemp = (index: number): void => {
+    const temporadas = (window as any).temporadasTemporales || [];
+    temporadas.splice(index, 1);
+    actualizarPreviewTemporadas();
 };
 
 export function switchTab(tabId: string): void {

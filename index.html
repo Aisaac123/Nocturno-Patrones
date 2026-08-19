@@ -87,28 +87,35 @@
                     </div>
 
                     <div style="background-color: var(--bg-tertiary); padding: 1rem; border-radius: 4px; margin: 1rem 0;">
-                        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Temporadas y Episodios</h4>
+                        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Temporadas</h4>
+                        
                         <div class="form-group">
                             <label for="numero-temporada">Número de Temporada</label>
                             <input type="number" id="numero-temporada" name="numeroTemporada" min="1" value="1" required>
                         </div>
-                        <div class="form-group">
-                            <label for="episodio-titulo">Título del Episodio</label>
-                            <input type="text" id="episodio-titulo" name="episodioTitulo" placeholder="Ej: Piloto">
+
+                        <div style="background-color: var(--bg-secondary); padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem;">
+                            <label style="color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Episodios de esta temporada</label>
+                            
+                            <div class="form-group">
+                                <input type="text" id="episodio-titulo" name="episodioTitulo" placeholder="Título del episodio" style="margin-bottom: 0.5rem;">
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="episodio-duracion" name="episodioDuracion" min="1" placeholder="Duración (minutos)" style="margin-bottom: 0.5rem;">
+                            </div>
+                            <button type="button" id="btn-agregar-episodio" class="btn btn-secondary" style="width: 100%;">+ Agregar Episodio</button>
+                            
+                            <div id="episodios-preview" style="margin-top: 0.75rem; min-height: 30px;">
+                                <span style="color: var(--text-secondary); font-size: 0.85rem;">Sin episodios</span>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="episodio-duracion">Duración (minutos)</label>
-                            <input type="number" id="episodio-duracion" name="episodioDuracion" min="1" placeholder="Ej: 45">
-                        </div>
-                        <button type="button" id="btn-agregar-episodio" class="btn btn-secondary" style="margin-bottom: 1rem;">+ Agregar Episodio</button>
-                        <div id="episodios-preview" style="background-color: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; min-height: 50px;">
-                            <span style="color: var(--text-secondary); font-size: 0.85rem;">Episodios de esta temporada: Ninguno</span>
-                        </div>
-                        <button type="button" id="btn-agregar-temporada" class="btn btn-primary">+ Guardar Temporada y Siguiente</button>
+
+                        <button type="button" id="btn-agregar-temporada" class="btn btn-primary" style="width: 100%;">+ Guardar Temporada</button>
+                        
                         <div id="temporadas-preview" style="margin-top: 1rem;"></div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Crear Serie</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Serie</button>
                 </form>
 
                 <form id="form-documental" style="display: none;">
