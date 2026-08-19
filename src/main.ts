@@ -1,6 +1,6 @@
 import { crearDatos } from './seed';
 import { renderCatalogo, renderMiLista } from './ui/renderers';
-import { setupEventListeners, switchTab } from './ui/events';
+import { setupEventListeners, switchTab, actualizarPreviewEpisodios, actualizarPreviewTemporadas } from './ui/events';
 import { log, limpiarBitacora } from './utils/logger';
 import { Repositorio } from './services/repositorio';
 
@@ -80,6 +80,66 @@ function main(): void {
     const formDocumental = document.getElementById('form-documental');
     if (formDocumental) {
         formDocumental.addEventListener('submit', handlers.onAgregarDocumental);
+    }
+
+    const btnAgregarEpisodio = document.getElementById('btn-agregar-episodio');
+    if (btnAgregarEpisodio) {
+        btnAgregarEpisodio.addEventListener('click', () => {
+            const episodioTitulo = (document.getElementById('episodio-titulo') as HTMLInputElement).value;
+            const episodioDuracion = parseInt((document.getElementById('episodio-duracion') as HTMLInputElement).value);
+
+            if (!episodioTitulo || !episodioDuracion) {
+                alert('Por favor ingresa título y duración del episodio');
+                return;
+            }
+
+            if (!(window as any).episodiosTemporales) {
+                (window as any).episodiosTemporales = [];
+            }
+
+            const episodios = (window as any).episodiosTemporales;
+            const numeroEpisodio = episodios.length + 1;
+            episodios.push({
+                numero: numeroEpisodio,
+                titulo: episodioTitulo,
+                duracionMin: episodioDuracion
+            });
+
+            (document.getElementById('episodio-titulo') as HTMLInputElement).value = '';
+            (document.getElementById('episodio-duracion') as HTMLInputElement).value = '';
+
+            actualizarPreviewEpisodios();
+            log('COMPOSICIÓN', `Episodio ${numeroEpisodio} agregado a temporada temporal`);
+        });
+    }
+
+    const btnAgregarTemporada = document.getElementById('btn-agregar-temporada');
+    if (btnAgregarTemporada) {
+        btnAgregarTemporada.addEventListener('click', () => {
+            const numeroTemporada = parseInt((document.getElementById('numero-temporada') as HTMLInputElement).value);
+            const episodios = (window as any).episodiosTemporales || [];
+
+            if (episodios.length === 0) {
+                alert('Por favor agrega al menos un episodio antes de guardar la temporada');
+                return;
+            }
+
+            if (!(window as any).temporadasTemporales) {
+                (window as any).temporadasTemporales = [];
+            }
+
+            (window as any).temporadasTemporales.push({
+                numero: numeroTemporada,
+                episodios: [...episodios]
+            });
+
+            (window as any).episodiosTemporales = [];
+            (document.getElementById('numero-temporada') as HTMLInputElement).value = String(numeroTemporada + 1);
+
+            actualizarPreviewEpisodios();
+            actualizarPreviewTemporadas();
+            log('COMPOSICIÓN', `Temporada ${numeroTemporada} guardada con ${episodios.length} episodios`);
+        });
     }
 
     log('ABSTRACCIÓN', 'Aplicación iniciada usando interfaz común de Contenido');

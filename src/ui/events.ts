@@ -147,19 +147,31 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         const creador = formData.get('creador') as string;
         const youtubeUrl = formData.get('youtubeUrl') as string;
 
+        const temporadasData = (window as any).temporadasTemporales || [];
+
         try {
             const nuevaSerie = new Serie(titulo, anio, sinopsis, creador, youtubeUrl);
 
-            const temporada1 = nuevaSerie.agregarTemporada(1);
-            temporada1.agregarEpisodio(new Episodio(1, 'Piloto', 45));
-            temporada1.agregarEpisodio(new Episodio(2, 'Desarrollo', 42));
+            temporadasData.forEach((tData: any) => {
+                const temporada = nuevaSerie.agregarTemporada(tData.numero);
+                tData.episodios.forEach((eData: any) => {
+                    temporada.agregarEpisodio(new Episodio(eData.numero, eData.titulo, eData.duracionMin));
+                });
+            });
+
+            if (nuevaSerie.totalTemporadas === 0) {
+                const temporada1 = nuevaSerie.agregarTemporada(1);
+                temporada1.agregarEpisodio(new Episodio(1, 'Piloto', 45));
+            }
 
             catalogo.agregar(nuevaSerie);
 
             log('HERENCIA', `Nueva instancia de Serie creada extendiendo Contenido`);
-            log('COMPOSICIÓN', `Serie "${titulo}" creada con temporadas que viven solo dentro de ella`);
+            log('COMPOSICIÓN', `Serie "${titulo}" creada con ${nuevaSerie.totalTemporadas} temporadas`);
 
             form.reset();
+            (window as any).temporadasTemporales = [];
+            actualizarPreviewTemporadas();
             renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
             switchTab('catalogo');
             guardarTodo();
@@ -209,6 +221,41 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         onAgregarDocumental
     };
 }
+
+export const actualizarPreviewEpisodios = (): void => {
+    const preview = document.getElementById('episodios-preview');
+    const episodiosTemporales = (window as any).episodiosTemporales || [];
+    if (!preview) return;
+
+    if (episodiosTemporales.length === 0) {
+        preview.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem;">Episodios de esta temporada: Ninguno</span>';
+    } else {
+        preview.innerHTML = episodiosTemporales.map((e: any, i: number) =>
+            `<div style="color: var(--text-primary); font-size: 0.85rem; padding: 0.25rem 0;">
+                ${i + 1}. ${e.titulo} (${e.duracionMin}m)
+            </div>`
+        ).join('');
+    }
+};
+
+export const actualizarPreviewTemporadas = (): void => {
+    const preview = document.getElementById('temporadas-preview');
+    const temporadasTemporales = (window as any).temporadasTemporales || [];
+    if (!preview) return;
+
+    if (temporadasTemporales.length === 0) {
+        preview.innerHTML = '';
+    } else {
+        preview.innerHTML = temporadasTemporales.map((t: any) =>
+            `<div style="background-color: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                <strong style="color: var(--text-primary);">Temporada ${t.numero}</strong>
+                <div style="color: var(--text-secondary); font-size: 0.85rem;">
+                    ${t.episodios.length} episodios
+                </div>
+            </div>`
+        ).join('');
+    }
+};
 
 export function switchTab(tabId: string): void {
     document.querySelectorAll('.tab-content').forEach(content => {
