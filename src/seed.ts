@@ -51,12 +51,12 @@ export function crearDatos(repositorio: Repositorio) {
 
     const temporada1 = serie.agregarTemporada(1);
     temporada1.agregarEpisodio(new Episodio(1, 'Pilot', 49, 'https://www.youtube.com/watch?v=HhesaQXLuRY'));
-    temporada1.agregarEpisodio(new Episodio(2, 'Cat\'s in the Bag...', 48, 'https://www.youtube.com/watch?v=HhesaQXLuRY'));
-    temporada1.agregarEpisodio(new Episodio(3, '...And the Bag\'s in the River', 46, 'https://www.youtube.com/watch?v=HhesaQXLuRY'));
+    temporada1.agregarEpisodio(new Episodio(2, 'Cat\'s in the Bag...', 48, 'https://www.youtube.com/watch?v=FHI8DxQgTBI'));
+    temporada1.agregarEpisodio(new Episodio(3, '...And the Bag\'s in the River', 46, 'https://www.youtube.com/watch?v=5D6ACN4J0po'));
 
     const temporada2 = serie.agregarTemporada(2);
-    temporada2.agregarEpisodio(new Episodio(1, 'Seven Thirty-Seven', 48, 'https://www.youtube.com/watch?v=HhesaQXLuRY'));
-    temporada2.agregarEpisodio(new Episodio(2, 'Grilled', 43, 'https://www.youtube.com/watch?v=HhesaQXLuRY'));
+    temporada2.agregarEpisodio(new Episodio(1, 'Seven Thirty-Seven', 48, 'https://www.youtube.com/watch?v=6_9uQjC6Kqk'));
+    temporada2.agregarEpisodio(new Episodio(2, 'Grilled', 43, 'https://www.youtube.com/watch?v=6_9uQjC6Kqk'));
 
     const documental = new Documental(
         'Planet Earth',
