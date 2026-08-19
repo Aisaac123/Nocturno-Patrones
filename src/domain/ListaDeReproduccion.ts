@@ -4,6 +4,7 @@
  * DEMUESTRA:
  * - AGREGACIÓN: Contiene referencias a Contenido sin controlar su ciclo de vida
  * - ENCAPSULAMIENTO: items es privado, acceso controlado
+ * - POLIMORFISMO: Sobrecarga de constructor
  *
  * RESPONSABILIDAD: Lista personalizada de contenidos favoritos
  */
@@ -12,9 +13,14 @@ export class ListaDeReproduccion {
     readonly propietario: Usuario;
     private items: Contenido[] = [];
 
-    constructor(nombre: string, propietario: Usuario) {
+    constructor(nombre: string, propietario: Usuario);
+    constructor(nombre: string, propietario: Usuario, contenidosIniciales: Contenido[]);
+    constructor(nombre: string, propietario: Usuario, contenidosIniciales?: Contenido[]) {
         this.nombre = nombre;
         this.propietario = propietario;
+        if (contenidosIniciales) {
+            this.items = [...contenidosIniciales];
+        }
     }
 
     agregar(contenido: Contenido): void {

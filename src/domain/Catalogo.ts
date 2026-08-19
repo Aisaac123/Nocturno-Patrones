@@ -3,11 +3,20 @@
  *
  * DEMUESTRA:
  * - ENCAPSULAMIENTO: items es privado, acceso controlado
+ * - POLIMORFISMO: Sobrecarga de constructor
  *
  * RESPONSABILIDAD: Administrar la colección de contenidos
  */
 export class Catalogo {
     private items: Contenido[] = [];
+
+    constructor();
+    constructor(contenidosIniciales: Contenido[]);
+    constructor(contenidosIniciales?: Contenido[]) {
+        if (contenidosIniciales) {
+            this.items = [...contenidosIniciales];
+        }
+    }
 
     agregar(contenido: Contenido): void {
         this.items.push(contenido);

@@ -6,6 +6,7 @@ import { Contenido } from './Contenido';
  * DEMUESTRA:
  * - HERENCIA: Extiende Contenido
  * - POLIMORFISMO: Implementa métodos abstractos específicos para documentales
+ * - POLIMORFISMO: Sobrecarga de reproducir() y constructor
  * - ENCAPSULAMIENTO: duracionMin es privado
  *
  * RESPONSABILIDAD: Representar un documental cinematográfico
@@ -15,14 +16,21 @@ export class Documental extends Contenido {
     public tema: string;
     public investigador: string;
 
-    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, tema: string, investigador: string, youtubeUrl: string = '') {
-        super(titulo, anio, sinopsis, youtubeUrl);
+    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, tema: string, investigador: string, youtubeUrl: string);
+    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, tema: string, investigador: string);
+    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, tema: string, investigador: string, youtubeUrl?: string) {
+        super(titulo, anio, sinopsis, youtubeUrl || '');
         this.duracionMin = duracionMin;
         this.tema = tema;
         this.investigador = investigador;
     }
 
-    reproducir(): string {
+    reproducir(): string;
+    reproducir(autoplay: boolean): string;
+    reproducir(autoplay: boolean = false): string {
+        if (autoplay) {
+            return `🎥 AUTOREPRODUCIENDO documental: ${this.titulo} - Tema: ${this.tema} - Investigado por ${this.investigador}`;
+        }
         return `Reproduciendo documental: ${this.titulo} - Tema: ${this.tema} - Investigado por ${this.investigador}`;
     }
 

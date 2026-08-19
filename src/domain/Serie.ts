@@ -7,6 +7,7 @@ import { Temporada } from './Temporada';
  * DEMUESTRA:
  * - HERENCIA: Extiende Contenido
  * - POLIMORFISMO: Implementa métodos abstractos específicos para series
+ * - POLIMORFISMO: Sobrecarga de reproducir() y constructor
  * - COMPOSICIÓN: Temporadas viven solo dentro de esta instancia
  * - ENCAPSULAMIENTO: temporadas es privado, sin setter público
  *
@@ -16,8 +17,10 @@ export class Serie extends Contenido {
     private temporadas: Temporada[] = [];
     public creador: string;
 
-    constructor(titulo: string, anio: number, sinopsis: string, creador: string, youtubeUrl: string = '') {
-        super(titulo, anio, sinopsis, youtubeUrl);
+    constructor(titulo: string, anio: number, sinopsis: string, creador: string, youtubeUrl: string);
+    constructor(titulo: string, anio: number, sinopsis: string, creador: string);
+    constructor(titulo: string, anio: number, sinopsis: string, creador: string, youtubeUrl?: string) {
+        super(titulo, anio, sinopsis, youtubeUrl || '');
         this.creador = creador;
     }
 
@@ -31,10 +34,15 @@ export class Serie extends Contenido {
         return [...this.temporadas];
     }
 
-    reproducir(): string {
+    reproducir(): string;
+    reproducir(autoplay: boolean): string;
+    reproducir(autoplay: boolean = false): string {
         const ultimaTemporada = this.temporadas.length > 0
             ? this.temporadas[this.temporadas.length - 1].numero
             : 0;
+        if (autoplay) {
+            return `📺 AUTOREPRODUCIENDO serie: ${this.titulo} - Temporada ${ultimaTemporada}`;
+        }
         return `Reproduciendo serie: ${this.titulo} - Temporada ${ultimaTemporada}`;
     }
 

@@ -4,6 +4,7 @@
  * DEMUESTRA:
  * - ABSTRACCIÓN: Define la interfaz común para todos los tipos de contenido
  * - ENCAPSULAMIENTO: Campos privados/protegidos con acceso controlado
+ * - POLIMORFISMO: Método calificar sobrecargado para diferentes casos
  *
  * RESPONSABILIDAD: Contrato base para contenido reproducible
  */
@@ -15,18 +16,25 @@ export abstract class Contenido {
     protected vistoPor: Set<Usuario> = new Set();
     protected youtubeUrl: string;
 
-    constructor(titulo: string, anio: number, sinopsis: string, youtubeUrl: string = '') {
+    constructor(titulo: string, anio: number, sinopsis: string, youtubeUrl: string);
+    constructor(titulo: string, anio: number, sinopsis: string);
+    constructor(titulo: string, anio: number, sinopsis: string, youtubeUrl?: string) {
         this.titulo = titulo;
         this.anio = anio;
         this.sinopsis = sinopsis;
-        this.youtubeUrl = youtubeUrl;
+        this.youtubeUrl = youtubeUrl || '';
     }
 
-    calificar(estrellas: number): void {
+    calificar(estrellas: number): void;
+    calificar(estrellas: number, usuario: Usuario): void;
+    calificar(estrellas: number, usuario?: Usuario): void {
         if (estrellas < 1 || estrellas > 5) {
             throw new Error('La calificación debe estar entre 1 y 5');
         }
         this.calificaciones.push(estrellas);
+        if (usuario) {
+            this.marcarVisto(usuario);
+        }
     }
 
     get promedioCalificacion(): number {
@@ -59,6 +67,7 @@ export abstract class Contenido {
     }
 
     abstract reproducir(): string;
+    abstract reproducir(autoplay: boolean): string;
     abstract duracionTotal(): number;
     abstract get tipo(): string;
 }
