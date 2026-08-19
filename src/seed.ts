@@ -32,7 +32,8 @@ export function crearDatos() {
         2023,
         'Un thriller psicológico sobre un detective que persigue a un asesino en serie en una ciudad que nunca duerme.',
         142,
-        'María González'
+        'María González',
+        'https://www.youtube.com/watch?v=jNQXAC9IVRw' // "Me at the zoo" - primer video de YouTube
     );
 
     const pelicula2 = new Pelicula(
@@ -40,7 +41,8 @@ export function crearDatos() {
         2021,
         'Una aventura épica de ciencia ficción sobre la colonización de Marte y los desafíos humanos en el espacio.',
         178,
-        'Carlos Rodríguez'
+        'Carlos Rodríguez',
+        'https://www.youtube.com/watch?v=9bZkp7q19f0' // Gangnam Style - video muy popular
     );
 
     // Crear 1 serie con 2 temporadas, 2-3 episodios cada una
@@ -48,7 +50,8 @@ export function crearDatos() {
         'Sombras del Pasado',
         2022,
         'Un drama histórico que sigue a una familia a través de tres generaciones, revelando secretos ocultos y traiciones.',
-        'Ana Martínez'
+        'Ana Martínez',
+        'https://www.youtube.com/watch?v=dQw4w9WgXcQ' // Video de ejemplo para serie
     );
 
     // Temporada 1 con 3 episodios
@@ -69,7 +72,8 @@ export function crearDatos() {
         'Un viaje visual a las profundidades de los océanos, explorando ecosistemas desconocidos y especies nunca antes vistas.',
         95,
         'Vida Marina',
-        'Dr. Roberto Sánchez'
+        'Dr. Roberto Sánchez',
+        'https://www.youtube.com/watch?v=h0B9zQ8j5-Y' // Video de naturaleza (ejemplo)
     );
 
     // Agregar todo al catálogo

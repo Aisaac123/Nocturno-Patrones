@@ -18,8 +18,8 @@ export class Documental extends Contenido {
     public tema: string;
     public investigador: string;
 
-    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, tema: string, investigador: string) {
-        super(titulo, anio, sinopsis);
+    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, tema: string, investigador: string, youtubeUrl: string = '') {
+        super(titulo, anio, sinopsis, youtubeUrl);
         this.duracionMin = duracionMin;
         this.tema = tema;
         this.investigador = investigador;

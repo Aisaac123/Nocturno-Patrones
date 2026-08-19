@@ -98,7 +98,7 @@ nocturno/
 ## 📱 Funcionalidades
 
 ### CRUD Completo
-- **CREATE:** Agregar películas, series y documentales desde el formulario
+- **CREATE:** Agregar películas, series y documentales con enlaces de YouTube
 - **READ:** Visualizar catálogo, lista de reproducción y detalles
 - **UPDATE:** Sistema de calificación con estrellas (1-5)
 - **DELETE:** Eliminar contenidos del catálogo
@@ -106,10 +106,18 @@ nocturno/
 ### Características de UI
 - **Navegación por tabs:** Catálogo, Agregar, Mi Lista, Bitácora
 - **Cards de contenido:** Muestran tipo, año, sinopsis, duración, calificación
+- **Colores por tipo:** Películas (azul), Series (púrpura), Documentales (verde)
 - **Sistema de rating:** Calificación promedio con estrellas visuales
+- **Reproductor YouTube:** Integración de videos reales en la página de detalle
 - **Lista de reproducción:** Gestión de contenidos favoritos
-- **Detalle de contenido:** Página dedicada para ver información completa
+- **Detalle de contenido:** Página dedicada con reproductor integrado
 - **Bitácora POO/UML:** Registro en tiempo real de conceptos activados
+
+### Reproducción de Videos
+- **Soporte YouTube:** Links de YouTube opcionales para cada contenido
+- **Reproductor integrado:** Iframe de YouTube en página de detalle
+- **Botón reproducir:** Acceso directo al reproductor desde catálogo o detalle
+- **Videos de ejemplo:** Seed data incluye videos reales de YouTube
 
 ## 🎓 Conceptos POO/UML Demostrados
 
@@ -125,10 +133,10 @@ Cada acción en la aplicación activa diferentes conceptos que se muestran en la
 
 ## 📝 Datos de Ejemplo
 
-El proyecto incluye datos iniciales:
-- 2 películas con directores y duraciones distintos
-- 1 serie con 2 temporadas y 2-3 episodios cada una
-- 1 documental con tema e investigador
+El proyecto incluye datos iniciales con videos reales de YouTube:
+- 2 películas con directores, duraciones y videos de YouTube
+- 1 serie con 2 temporadas, 2-3 episodios cada una y video
+- 1 documental con tema, investigador y video
 - 1 usuario "Tú"
 - 1 lista de reproducción vacía
 
@@ -142,8 +150,9 @@ npm run watch    # Modo watch para desarrollo (compilación automática)
 ## 🎨 Diseño
 
 - **Paleta de colores:** Profesional y sobria (grises oscuros con acento azul)
+- **Colores por tipo:** Películas (azul), Series (púrpura), Documentales (verde)
 - **Tipografía:** System fonts (Arial, Segoe UI, Roboto)
-- **Responsive:** Adaptable a dispositivos móviles
+- **Responsive:** Adaptable a dispositivos móviles con diseño mobile-first
 - **Estilo:** Limpio y moderno, optimizado para uso académico
 
 ## 📄 Licencia

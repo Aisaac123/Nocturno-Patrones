@@ -1,4 +1,4 @@
-import { formatearDuracion, formatearEstrellas, formatearTipo, formatearNumero } from '../utils/formatters';
+import { formatearDuracion, formatearEstrellas, formatearTipo, formatearNumero, extraerYoutubeId, generarYoutubeEmbed, obtenerColorTipo } from '../utils/formatters';
 import { log } from '../utils/logger';
 
 /**
@@ -63,12 +63,13 @@ function renderCard(
     const estrellas = formatearEstrellas(promedio);
     const votos = contenido.totalCalificaciones;
     const vistas = formatearNumero(contenido.totalVistas);
+    const colorTipo = obtenerColorTipo(contenido.tipo);
 
     console.log(`Renderizando card "${contenido.titulo}":`, { promedio, estrellas, votos });
 
     card.innerHTML = `
         <div class="card-header">
-            <span class="card-type">${tipo}</span>
+            <span class="card-type" style="background-color: ${colorTipo};">${tipo}</span>
             <span class="card-year">${contenido.anio}</span>
         </div>
         <h3 class="card-title">${contenido.titulo}</h3>
@@ -182,11 +183,14 @@ export function renderDetalleContenido(contenido: any): void {
     const estrellas = formatearEstrellas(promedio);
     const votos = contenido.totalCalificaciones;
     const vistas = formatearNumero(contenido.totalVistas);
+    const colorTipo = obtenerColorTipo(contenido.tipo);
+    const youtubeId = extraerYoutubeId(contenido.urlYoutube);
+    const youtubeEmbed = youtubeId ? generarYoutubeEmbed(youtubeId) : '';
 
     let html = `
         <div class="detalle-header">
             <div>
-                <span class="detalle-tipo">${tipo}</span>
+                <span class="detalle-tipo" style="background-color: ${colorTipo};">${tipo}</span>
                 <h2 class="detalle-titulo">${contenido.titulo}</h2>
                 <div class="detalle-meta">
                     ${contenido.anio} • ${duracion} • ${vistas} vistas
@@ -194,6 +198,8 @@ export function renderDetalleContenido(contenido: any): void {
             </div>
             <button class="btn btn-secondary btn-volver">← Volver</button>
         </div>
+
+        ${youtubeEmbed ? youtubeEmbed : '<p style="color: var(--text-secondary); font-style: italic;">No hay video disponible</p>'}
 
         <p class="detalle-sinopsis">${contenido.sinopsis}</p>
 

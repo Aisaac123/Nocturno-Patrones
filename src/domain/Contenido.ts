@@ -24,10 +24,14 @@ export abstract class Contenido {
     // Campo protegido - accesible por subclases para tracking de vistas
     protected vistoPor: Set<any> = new Set();
 
-    constructor(titulo: string, anio: number, sinopsis: string) {
+    // Campo protegido - URL de YouTube para reproducción
+    protected youtubeUrl: string;
+
+    constructor(titulo: string, anio: number, sinopsis: string, youtubeUrl: string = '') {
         this.titulo = titulo;
         this.anio = anio;
         this.sinopsis = sinopsis;
+        this.youtubeUrl = youtubeUrl;
     }
 
     /**
@@ -75,6 +79,22 @@ export abstract class Contenido {
      */
     get totalVistas(): number {
         return this.vistoPor.size;
+    }
+
+    /**
+     * Getter para URL de YouTube
+     * ENCAPSULAMIENTO: Expone la URL para reproducción
+     */
+    get urlYoutube(): string {
+        return this.youtubeUrl;
+    }
+
+    /**
+     * Setter para URL de YouTube
+     * ENCAPSULAMIENTO: Controla la actualización de la URL
+     */
+    setUrlYoutube(url: string): void {
+        this.youtubeUrl = url;
     }
 
     /**

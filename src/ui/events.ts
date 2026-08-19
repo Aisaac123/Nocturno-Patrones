@@ -27,6 +27,15 @@ export function setupEventListeners(datos: any): any {
         const resultado = usuario.ver(contenido);
         log('POLIMORFISMO', resultado);
 
+        // Guardar referencia al contenido actual
+        (window as any).contenidoActual = contenido;
+
+        // Renderizar detalle con reproductor
+        renderDetalleContenido(contenido);
+
+        // Cambiar al tab de detalle
+        switchTab('detalle');
+
         // Re-renderizar catálogo para actualizar vistas
         renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
     };
@@ -109,9 +118,10 @@ export function setupEventListeners(datos: any): any {
         const sinopsis = formData.get('sinopsis') as string;
         const duracion = parseInt(formData.get('duracion') as string);
         const director = formData.get('director') as string;
+        const youtubeUrl = formData.get('youtubeUrl') as string;
 
         try {
-            const nuevaPelicula = new Pelicula(titulo, anio, sinopsis, duracion, director);
+            const nuevaPelicula = new Pelicula(titulo, anio, sinopsis, duracion, director, youtubeUrl);
             catalogo.agregar(nuevaPelicula);
 
             log('HERENCIA', `Nueva instancia de Pelicula creada extendiendo Contenido`);
@@ -140,9 +150,10 @@ export function setupEventListeners(datos: any): any {
         const anio = parseInt(formData.get('anio') as string);
         const sinopsis = formData.get('sinopsis') as string;
         const creador = formData.get('creador') as string;
+        const youtubeUrl = formData.get('youtubeUrl') as string;
 
         try {
-            const nuevaSerie = new Serie(titulo, anio, sinopsis, creador);
+            const nuevaSerie = new Serie(titulo, anio, sinopsis, creador, youtubeUrl);
 
             // Agregar una temporada de ejemplo
             const temporada1 = nuevaSerie.agregarTemporada(1);
@@ -179,9 +190,10 @@ export function setupEventListeners(datos: any): any {
         const duracion = parseInt(formData.get('duracion') as string);
         const tema = formData.get('tema') as string;
         const investigador = formData.get('investigador') as string;
+        const youtubeUrl = formData.get('youtubeUrl') as string;
 
         try {
-            const nuevoDocumental = new Documental(titulo, anio, sinopsis, duracion, tema, investigador);
+            const nuevoDocumental = new Documental(titulo, anio, sinopsis, duracion, tema, investigador, youtubeUrl);
             catalogo.agregar(nuevoDocumental);
 
             log('HERENCIA', `Nueva instancia de Documental creada extendiendo Contenido`);

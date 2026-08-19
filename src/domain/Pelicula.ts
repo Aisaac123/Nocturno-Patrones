@@ -18,8 +18,8 @@ export class Pelicula extends Contenido {
     // Campo público - accesible directamente
     public director: string;
 
-    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, director: string) {
-        super(titulo, anio, sinopsis);
+    constructor(titulo: string, anio: number, sinopsis: string, duracionMin: number, director: string, youtubeUrl: string = '') {
+        super(titulo, anio, sinopsis, youtubeUrl);
         this.duracionMin = duracionMin;
         this.director = director;
     }

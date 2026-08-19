@@ -58,10 +58,60 @@ export function formatearTipo(tipo: string): string {
 }
 
 /**
+ * Obtiene el color correspondiente al tipo de contenido
+ * @param tipo - Tipo de contenido
+ * @returns Color en formato CSS
+ */
+export function obtenerColorTipo(tipo: string): string {
+    const colores: Record<string, string> = {
+        'PELÍCULA': '#2563eb',      // Azul
+        'SERIE': '#8b5cf6',          // Púrpura
+        'DOCUMENTAL': '#10b981'     // Verde
+    };
+
+    return colores[tipo.toUpperCase()] || '#6b7280';
+}
+
+/**
  * Formatea número para mostrar con separadores de miles
  * @param numero - Número a formatear
  * @returns String formateado (ej: "1,234")
  */
 export function formatearNumero(numero: number): string {
     return numero.toLocaleString('es-ES');
+}
+
+/**
+ * Extrae el ID de video de YouTube de una URL
+ * @param url - URL de YouTube
+ * @returns ID del video o string vacío si no es válida
+ */
+export function extraerYoutubeId(url: string): string {
+    if (!url) return '';
+
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+
+    return match ? match[1] : '';
+}
+
+/**
+ * Genera el HTML del iframe de YouTube
+ * @param videoId - ID del video de YouTube
+ * @returns HTML del iframe
+ */
+export function generarYoutubeEmbed(videoId: string): string {
+    if (!videoId) return '';
+
+    return `
+        <div class="youtube-container">
+            <iframe
+                src="https://www.youtube.com/embed/${videoId}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                class="youtube-iframe"
+            ></iframe>
+        </div>
+    `;
 }

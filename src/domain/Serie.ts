@@ -21,8 +21,8 @@ export class Serie extends Contenido {
     // Campo público
     public creador: string;
 
-    constructor(titulo: string, anio: number, sinopsis: string, creador: string) {
-        super(titulo, anio, sinopsis);
+    constructor(titulo: string, anio: number, sinopsis: string, creador: string, youtubeUrl: string = '') {
+        super(titulo, anio, sinopsis, youtubeUrl);
         this.creador = creador;
     }
 
