@@ -1,31 +1,24 @@
-// Punto de entrada de la aplicación Nocturno
-// Este archivo orquesta toda la aplicación
-
 import { crearDatos } from './seed';
 import { renderCatalogo, renderMiLista } from './ui/renderers';
 import { setupEventListeners, switchTab } from './ui/events';
 import { log, limpiarBitacora } from './utils/logger';
+import { Repositorio } from './services/repositorio';
 
 console.log('Nocturno - Iniciando aplicación...');
 
-/**
- * Función principal que inicializa y ejecuta la aplicación
- */
 function main(): void {
-    // Limpiar bitácora al inicio
     limpiarBitacora();
 
-    // Crear datos de ejemplo
-    const datos = crearDatos();
+    const repositorio = new Repositorio();
+    const datos = crearDatos(repositorio);
     const { usuario, catalogo, miLista } = datos;
 
-    log('HERENCIA', 'Creando instancias de subclases (Pelicula, Serie, Documental) que extienden Contenido');
-    log('COMPOSICIÓN', 'Creando Serie con Temporadas que viven solo dentro de ella');
+    log('PERSISTENCIA', 'Datos cargados desde localStorage');
+    log('HERENCIA', 'Creando instancias de subclases (Pelicula, Serie, Documental)');
+    log('COMPOSICIÓN', 'Serie creada con Temporadas que viven solo dentro de ella');
 
-    // Configurar event listeners
-    const handlers = setupEventListeners(datos);
+    const handlers = setupEventListeners(datos, repositorio);
 
-    // Renderizar catálogo inicial
     renderCatalogo(
         catalogo,
         handlers.onReproducir,
@@ -35,10 +28,8 @@ function main(): void {
         handlers.onEliminar
     );
 
-    // Renderizar lista de reproducción inicial
     renderMiLista(miLista, handlers.onQuitar, handlers.onVerDetalle);
 
-    // Configurar navegación de tabs
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
@@ -49,18 +40,23 @@ function main(): void {
         });
     });
 
-    // Configurar selector de tipo de contenido
+    const logo = document.getElementById('logo');
+    if (logo) {
+        logo.addEventListener('click', () => {
+            switchTab('catalogo');
+        });
+        logo.style.cursor = 'pointer';
+    }
+
     const tipoSelector = document.getElementById('tipo-contenido') as HTMLSelectElement;
     if (tipoSelector) {
         tipoSelector.addEventListener('change', (e) => {
             const tipo = (e.target as HTMLSelectElement).value;
 
-            // Ocultar todos los formularios
             document.getElementById('form-pelicula')!.style.display = 'none';
             document.getElementById('form-serie')!.style.display = 'none';
             document.getElementById('form-documental')!.style.display = 'none';
 
-            // Mostrar el formulario correspondiente
             if (tipo === 'pelicula') {
                 document.getElementById('form-pelicula')!.style.display = 'block';
             } else if (tipo === 'serie') {
@@ -71,7 +67,6 @@ function main(): void {
         });
     }
 
-    // Configurar formularios
     const formPelicula = document.getElementById('form-pelicula');
     if (formPelicula) {
         formPelicula.addEventListener('submit', handlers.onAgregarPelicula);
@@ -87,11 +82,10 @@ function main(): void {
         formDocumental.addEventListener('submit', handlers.onAgregarDocumental);
     }
 
-    log('ABSTRACCIÓN', 'Aplicación iniciada usando interfaz común de Contenido para todos los tipos');
+    log('ABSTRACCIÓN', 'Aplicación iniciada usando interfaz común de Contenido');
     console.log('Nocturno - Aplicación inicializada correctamente');
 }
 
-// Ejecutar cuando el DOM esté listo
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', main);
 } else {

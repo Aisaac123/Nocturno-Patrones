@@ -8,6 +8,7 @@ import { Contenido } from '../domain/Contenido';
 import { Usuario } from '../domain/Usuario';
 import { Catalogo } from '../domain/Catalogo';
 import { ListaDeReproduccion } from '../domain/ListaDeReproduccion';
+import { Repositorio } from '../services/repositorio';
 
 interface DatosAplicacion {
     usuario: Usuario;
@@ -27,13 +28,15 @@ interface Handlers {
     onAgregarDocumental: (event: Event) => void;
 }
 
-/**
- * UI - Events
- *
- * RESPONSABILIDAD: Configurar y manejar eventos de la interfaz
- */
-export function setupEventListeners(datos: DatosAplicacion): Handlers {
+export function setupEventListeners(datos: DatosAplicacion, repositorio: Repositorio): Handlers {
     const { usuario, catalogo, miLista } = datos;
+
+    const guardarTodo = () => {
+        repositorio.guardarCatalogo(catalogo);
+        repositorio.guardarUsuario(usuario);
+        repositorio.guardarLista(miLista);
+        log('PERSISTENCIA', 'Estado guardado en localStorage');
+    };
 
     const onReproducir = (contenido: Contenido) => {
         log('ASOCIACIÓN', `Usuario "${usuario.nombre}" iniciando ASOCIACIÓN con "${contenido.titulo}"`);
@@ -44,6 +47,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
         renderDetalleContenido(contenido);
         switchTab('detalle');
         renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
+        guardarTodo();
     };
 
     const onToggleLista = (contenido: Contenido) => {
@@ -57,6 +61,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
 
         renderMiLista(miLista, onQuitar, onVerDetalle);
         actualizarBotonesMiLista(miLista, catalogo.todos);
+        guardarTodo();
     };
 
     const onQuitar = (contenido: Contenido) => {
@@ -65,6 +70,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
 
         renderMiLista(miLista, onQuitar, onVerDetalle);
         actualizarBotonesMiLista(miLista, catalogo.todos);
+        guardarTodo();
     };
 
     const onCalificar = (contenido: Contenido, estrellas: number) => {
@@ -74,6 +80,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
             log('POLIMORFISMO', `Promedio actualizado: ${contenido.promedioCalificacion.toFixed(1)}`);
 
             renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
+            guardarTodo();
         } catch (error) {
             log('ENCAPSULAMIENTO', `Error al calificar: ${(error as Error).message}`);
         }
@@ -97,6 +104,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
 
             renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
             renderMiLista(miLista, onQuitar, onVerDetalle);
+            guardarTodo();
         }
     };
 
@@ -122,6 +130,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
             form.reset();
             renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
             switchTab('catalogo');
+            guardarTodo();
         } catch (error) {
             log('ENCAPSULAMIENTO', `Error al crear película: ${(error as Error).message}`);
         }
@@ -153,6 +162,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
             form.reset();
             renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
             switchTab('catalogo');
+            guardarTodo();
         } catch (error) {
             log('ENCAPSULAMIENTO', `Error al crear serie: ${(error as Error).message}`);
         }
@@ -181,6 +191,7 @@ export function setupEventListeners(datos: DatosAplicacion): Handlers {
             form.reset();
             renderCatalogo(catalogo, onReproducir, onToggleLista, onCalificar, onVerDetalle, onEliminar);
             switchTab('catalogo');
+            guardarTodo();
         } catch (error) {
             log('ENCAPSULAMIENTO', `Error al crear documental: ${(error as Error).message}`);
         }

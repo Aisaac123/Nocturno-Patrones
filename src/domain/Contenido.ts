@@ -66,6 +66,14 @@ export abstract class Contenido {
         return this.sinopsis;
     }
 
+    get calificacionesArray(): number[] {
+        return [...this.calificaciones];
+    }
+
+    restaurarCalificaciones(calificaciones: number[]): void {
+        this.calificaciones = [...calificaciones];
+    }
+
     abstract reproducir(): string;
     abstract reproducir(autoplay: boolean): string;
     abstract duracionTotal(): number;

@@ -8,7 +8,7 @@
  * RESPONSABILIDAD: Registrar y mostrar conceptos de POO/UML en la bitácora
  */
 
-type ConceptoPOO = 'ABSTRACCIÓN' | 'ENCAPSULAMIENTO' | 'HERENCIA' | 'POLIMORFISMO' | 'COMPOSICIÓN' | 'AGREGACIÓN' | 'ASOCIACIÓN';
+type ConceptoPOO = 'ABSTRACCIÓN' | 'ENCAPSULAMIENTO' | 'HERENCIA' | 'POLIMORFISMO' | 'COMPOSICIÓN' | 'AGREGACIÓN' | 'ASOCIACIÓN' | 'PERSISTENCIA';
 
 const colores: Record<ConceptoPOO, string> = {
     'ABSTRACCIÓN': 'badge-abstraccion',
@@ -17,7 +17,8 @@ const colores: Record<ConceptoPOO, string> = {
     'POLIMORFISMO': 'badge-polimorfismo',
     'COMPOSICIÓN': 'badge-composicion',
     'AGREGACIÓN': 'badge-agregacion',
-    'ASOCIACIÓN': 'badge-asociacion'
+    'ASOCIACIÓN': 'badge-asociacion',
+    'PERSISTENCIA': 'badge-info'
 };
 
 /**
