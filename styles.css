@@ -544,6 +544,11 @@ main {
     color: white;
 }
 
+.badge-info {
+    background-color: var(--info);
+    color: white;
+}
+
 .timestamp {
     color: var(--text-secondary);
     margin-right: 0.5rem;

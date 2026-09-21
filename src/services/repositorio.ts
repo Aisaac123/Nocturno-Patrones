@@ -7,6 +7,7 @@ import { Serie } from '../domain/Serie';
 import { Documental } from '../domain/Documental';
 import { Persistencia } from './persistencia';
 import { ContenidoFactory, DatosPelicula, DatosSerie, DatosDocumental } from './contenidoFactory';
+import { log } from '../utils/logger';
 
 /**
  * SERVICIO Repositorio
@@ -120,6 +121,7 @@ export class Repositorio {
     private dtoToContenido(dto: any): Contenido | null {
         try {
             const contenido = ContenidoFactory.crearContenido(dto.tipo, dto);
+            log('FACTORY METHOD', `Contenido "${dto.titulo}" (${dto.tipo}) recreado desde persistencia usando ContenidoFactory`);
             this.restaurarCalificaciones(contenido, dto.calificaciones);
             return contenido;
         } catch (error) {

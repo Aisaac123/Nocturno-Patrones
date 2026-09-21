@@ -3,6 +3,7 @@ import { ListaDeReproduccion } from './domain/ListaDeReproduccion';
 import { Catalogo } from './domain/Catalogo';
 import { Repositorio } from './services/repositorio';
 import { ContenidoFactory, DatosPelicula, DatosSerie, DatosDocumental } from './services/contenidoFactory';
+import { log } from './utils/logger';
 
 export function crearDatos(repositorio: Repositorio) {
     const catalogoGuardado = repositorio.cargarCatalogo();
@@ -29,6 +30,7 @@ export function crearDatos(repositorio: Repositorio) {
         youtubeUrl: 'https://www.youtube.com/watch?v=vKQi3bBA1y8'
     };
     const pelicula1 = ContenidoFactory.crearPelicula(datosPelicula1);
+    log('FACTORY METHOD', `Película "${datosPelicula1.titulo}" creada usando ContenidoFactory (seed data)`);
 
     const datosPelicula2: DatosPelicula = {
         titulo: 'Inception',
@@ -39,6 +41,7 @@ export function crearDatos(repositorio: Repositorio) {
         youtubeUrl: 'https://www.youtube.com/watch?v=YoHD9XEInc0'
     };
     const pelicula2 = ContenidoFactory.crearPelicula(datosPelicula2);
+    log('FACTORY METHOD', `Película "${datosPelicula2.titulo}" creada usando ContenidoFactory (seed data)`);
 
     const datosSerie: DatosSerie = {
         titulo: 'Breaking Bad',
@@ -65,6 +68,7 @@ export function crearDatos(repositorio: Repositorio) {
         ]
     };
     const serie = ContenidoFactory.crearSerie(datosSerie);
+    log('FACTORY METHOD', `Serie "${datosSerie.titulo}" creada usando ContenidoFactory (seed data)`);
 
     const datosDocumental: DatosDocumental = {
         titulo: 'Planet Earth',
@@ -76,6 +80,7 @@ export function crearDatos(repositorio: Repositorio) {
         youtubeUrl: 'https://www.youtube.com/watch?v=JkaxUblCGz0'
     };
     const documental = ContenidoFactory.crearDocumental(datosDocumental);
+    log('FACTORY METHOD', `Documental "${datosDocumental.titulo}" creado usando ContenidoFactory (seed data)`);
 
     catalogo.agregar(pelicula1);
     catalogo.agregar(pelicula2);
