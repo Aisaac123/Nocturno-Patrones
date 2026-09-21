@@ -1,14 +1,12 @@
 import { log } from '../utils/logger';
 import { renderMiLista, actualizarBotonesMiLista, renderCatalogo, renderDetalleContenido } from './renderers';
-import { Pelicula } from '../domain/Pelicula';
-import { Serie } from '../domain/Serie';
-import { Documental } from '../domain/Documental';
 import { Episodio } from '../domain/Episodio';
 import { Contenido } from '../domain/Contenido';
 import { Usuario } from '../domain/Usuario';
 import { Catalogo } from '../domain/Catalogo';
 import { ListaDeReproduccion } from '../domain/ListaDeReproduccion';
 import { Repositorio } from '../services/repositorio';
+import { ContenidoFactory, DatosPelicula, DatosSerie, DatosDocumental } from '../services/contenidoFactory';
 
 interface DatosAplicacion {
     usuario: Usuario;
@@ -129,9 +127,18 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         const youtubeUrl = formData.get('youtubeUrl') as string;
 
         try {
-            const nuevaPelicula = new Pelicula(titulo, anio, sinopsis, duracion, director, youtubeUrl);
+            const datosPelicula: DatosPelicula = {
+                titulo,
+                anio,
+                sinopsis,
+                duracionMin: duracion,
+                director,
+                youtubeUrl
+            };
+            const nuevaPelicula = ContenidoFactory.crearPelicula(datosPelicula);
             catalogo.agregar(nuevaPelicula);
 
+            log('FACTORY METHOD', `Película "${titulo}" creada usando ContenidoFactory`);
             log('HERENCIA', `Nueva instancia de Pelicula creada extendiendo Contenido`);
             log('POLIMORFISMO', `Película "${titulo}" agregada al catálogo`);
 
@@ -158,22 +165,18 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         const temporadasData = (window as any).temporadasTemporales || [];
 
         try {
-            const nuevaSerie = new Serie(titulo, anio, sinopsis, creador, youtubeUrl);
-
-            temporadasData.forEach((tData: any) => {
-                const temporada = nuevaSerie.agregarTemporada(tData.numero);
-                tData.episodios.forEach((eData: any) => {
-                    temporada.agregarEpisodio(new Episodio(eData.numero, eData.titulo, eData.duracionMin));
-                });
-            });
-
-            if (nuevaSerie.totalTemporadas === 0) {
-                const temporada1 = nuevaSerie.agregarTemporada(1);
-                temporada1.agregarEpisodio(new Episodio(1, 'Piloto', 45));
-            }
-
+            const datosSerie: DatosSerie = {
+                titulo,
+                anio,
+                sinopsis,
+                creador,
+                youtubeUrl,
+                temporadas: temporadasData.length > 0 ? temporadasData : [{ numero: 1, episodios: [{ numero: 1, titulo: 'Piloto', duracionMin: 45 }] }]
+            };
+            const nuevaSerie = ContenidoFactory.crearSerie(datosSerie);
             catalogo.agregar(nuevaSerie);
 
+            log('FACTORY METHOD', `Serie "${titulo}" creada usando ContenidoFactory`);
             log('HERENCIA', `Nueva instancia de Serie creada extendiendo Contenido`);
             log('COMPOSICIÓN', `Serie "${titulo}" creada con ${nuevaSerie.totalTemporadas} temporadas`);
 
@@ -202,9 +205,19 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         const youtubeUrl = formData.get('youtubeUrl') as string;
 
         try {
-            const nuevoDocumental = new Documental(titulo, anio, sinopsis, duracion, tema, investigador, youtubeUrl);
+            const datosDocumental: DatosDocumental = {
+                titulo,
+                anio,
+                sinopsis,
+                duracionMin: duracion,
+                tema,
+                investigador,
+                youtubeUrl
+            };
+            const nuevoDocumental = ContenidoFactory.crearDocumental(datosDocumental);
             catalogo.agregar(nuevoDocumental);
 
+            log('FACTORY METHOD', `Documental "${titulo}" creado usando ContenidoFactory`);
             log('HERENCIA', `Nueva instancia de Documental creada extendiendo Contenido`);
             log('POLIMORFISMO', `Documental "${titulo}" agregado al catálogo`);
 

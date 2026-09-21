@@ -1,12 +1,12 @@
-import { Pelicula } from '../domain/Pelicula';
-import { Serie } from '../domain/Serie';
-import { Documental } from '../domain/Documental';
 import { Usuario } from '../domain/Usuario';
 import { ListaDeReproduccion } from '../domain/ListaDeReproduccion';
 import { Catalogo } from '../domain/Catalogo';
-import { Episodio } from '../domain/Episodio';
-import { Temporada } from '../domain/Temporada';
+import { Contenido } from '../domain/Contenido';
+import { Pelicula } from '../domain/Pelicula';
+import { Serie } from '../domain/Serie';
+import { Documental } from '../domain/Documental';
 import { Persistencia } from './persistencia';
+import { ContenidoFactory, DatosPelicula, DatosSerie, DatosDocumental } from './contenidoFactory';
 
 /**
  * SERVICIO Repositorio
@@ -81,9 +81,9 @@ export class Repositorio {
             };
         }
         if (contenido instanceof Serie) {
-            const temporadasDto = contenido.obtenerTemporadas().map(t => ({
+            const temporadasDto = contenido.obtenerTemporadas().map((t: any) => ({
                 numero: t.numero,
-                episodios: t.getEpisodios().map(e => ({
+                episodios: t.getEpisodios().map((e: any) => ({
                     numero: e.numero,
                     titulo: e.titulo,
                     duracionMin: e.duracionMin,
@@ -117,49 +117,14 @@ export class Repositorio {
         return null;
     }
 
-    private dtoToContenido(dto: any): any {
-        switch (dto.tipo) {
-            case 'Pelicula':
-                const pelicula = new Pelicula(
-                    dto.titulo,
-                    dto.anio,
-                    dto.sinopsis,
-                    dto.duracionMin,
-                    dto.director,
-                    dto.youtubeUrl
-                );
-                this.restaurarCalificaciones(pelicula, dto.calificaciones);
-                return pelicula;
-            case 'Serie':
-                const serie = new Serie(
-                    dto.titulo,
-                    dto.anio,
-                    dto.sinopsis,
-                    dto.creador,
-                    dto.youtubeUrl
-                );
-                dto.temporadas.forEach((tDto: any) => {
-                    const temporada = serie.agregarTemporada(tDto.numero);
-                    tDto.episodios.forEach((eDto: any) => {
-                        temporada.agregarEpisodio(new Episodio(eDto.numero, eDto.titulo, eDto.duracionMin, eDto.youtubeUrl || ''));
-                    });
-                });
-                this.restaurarCalificaciones(serie, dto.calificaciones);
-                return serie;
-            case 'Documental':
-                const documental = new Documental(
-                    dto.titulo,
-                    dto.anio,
-                    dto.sinopsis,
-                    dto.duracionMin,
-                    dto.tema,
-                    dto.investigador,
-                    dto.youtubeUrl
-                );
-                this.restaurarCalificaciones(documental, dto.calificaciones);
-                return documental;
-            default:
-                return null;
+    private dtoToContenido(dto: any): Contenido | null {
+        try {
+            const contenido = ContenidoFactory.crearContenido(dto.tipo, dto);
+            this.restaurarCalificaciones(contenido, dto.calificaciones);
+            return contenido;
+        } catch (error) {
+            console.error(`Error al deserializar contenido: ${(error as Error).message}`);
+            return null;
         }
     }
 
