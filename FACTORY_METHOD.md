@@ -20,15 +20,15 @@ src/services/contenidoFactory.ts
 #### 1. **ContenidoFactory** (Clase Factory)
 - Responsabilidad única: Crear instancias de `Contenido`
 - Métodos estáticos para cada tipo de contenido:
-  - `crearPelicula(datos: DatosPelicula): Pelicula`
-  - `crearSerie(datos: DatosSerie): Serie`
-  - `crearDocumental(datos: DatosDocumental): Documental`
+  - `crearPelicula(datos: PeliculaDTO): Pelicula`
+  - `crearSerie(datos: SerieDTO): Serie`
+  - `crearDocumental(datos: DocumentalDTO): Documental`
   - `crearContenido(tipo: string, datos: any): Contenido` (método genérico)
 
 #### 2. **Interfaces de Datos**
-- `DatosPelicula`: Define estructura para crear películas
-- `DatosSerie`: Define estructura para crear series (incluye temporadas)
-- `DatosDocumental`: Define estructura para crear documentales
+- `PeliculaDTO`: Define estructura para crear películas
+- `SerieDTO`: Define estructura para crear series (incluye temporadas)
+- `DocumentalDTO`: Define estructura para crear documentales
 - `DatosTemporada`: Define estructura para temporadas
 - `DatosEpisodio`: Define estructura para episodios
 
@@ -55,11 +55,11 @@ Toda la creación está centralizada en `ContenidoFactory`:
 
 ```typescript
 // ✅ En events.ts
-const datosPelicula: DatosPelicula = { titulo, anio, sinopsis, duracionMin, director, youtubeUrl };
+const datosPelicula: PeliculaDTO = { titulo, anio, sinopsis, duracionMin, director, youtubeUrl };
 const nuevaPelicula = ContenidoFactory.crearPelicula(datosPelicula);
 
 // ✅ En seed.ts
-const datosPelicula1: DatosPelicula = { titulo: 'The Matrix', anio: 1999, ... };
+const datosPelicula1: PeliculaDTO = { titulo: 'The Matrix', anio: 1999, ... };
 const pelicula1 = ContenidoFactory.crearPelicula(datosPelicula1);
 
 // ✅ En repositorio.ts
@@ -125,7 +125,7 @@ Usuario interactúa con formulario
         ↓
 Event handler (events.ts)
         ↓
-Prepara datos en interfaces (DatosPelicula, DatosSerie, etc.)
+Prepara datos en interfaces (PeliculaDTO, SerieDTO, etc.)
         ↓
 ContenidoFactory.crearPelicula/datos()
         ↓
@@ -140,9 +140,9 @@ Agrega al catálogo y persiste
 
 ### Crear una Película
 ```typescript
-import { ContenidoFactory, DatosPelicula } from './services/contenidoFactory';
+import { ContenidoFactory, PeliculaDTO } from './services/contenidoFactory';
 
-const datosPelicula: DatosPelicula = {
+const datosPelicula: PeliculaDTO = {
     titulo: 'Inception',
     anio: 2010,
     sinopsis: 'Un ladrón que roba secretos corporativos...',
@@ -157,9 +157,9 @@ catalogo.agregar(pelicula);
 
 ### Crear una Serie con Temporadas
 ```typescript
-import { ContenidoFactory, DatosSerie } from './services/contenidoFactory';
+import { ContenidoFactory, SerieDTO } from './services/contenidoFactory';
 
-const datosSerie: DatosSerie = {
+const datosSerie: SerieDTO = {
     titulo: 'Breaking Bad',
     anio: 2008,
     sinopsis: 'Un profesor de química...',
@@ -211,279 +211,262 @@ La aplicación registra cuando se usa el Factory Method en la bitácora POO/UML:
 
 La implementación del Factory Method en Nocturno demuestra cómo un patrón de diseño puede integrarse de forma natural en una arquitectura existente, mejorando la mantenibilidad y extensibilidad sin comprometer la funcionalidad existente. El patrón se siente orgánico en este contexto porque la creación de diferentes tipos de contenido es una operación frecuente que beneficia de centralización y validación consistente.
 
+## 🔧 Refactorización SOLID del Repositorio
+
+Como parte de la mejora continua del proyecto, se refactorizó el Repositorio monolítico para cumplir con principios SOLID:
+
+### Problemas Identificados
+- **SRP Violado**: El Repositorio tenía múltiples responsabilidades (persistir 3 entidades, serializar/deserializar 3 tipos)
+- **OCP Violado**: Usaba `instanceof` checks que requerían modificación para nuevos tipos
+- **DIP Violado**: Dependía directamente de clases concretas
+
+### Solución Implementada
+Se dividió el Repositorio en repositorios especializados:
+- **CatalogoRepository**: Solo maneja persistencia de catálogos
+- **UsuarioRepository**: Solo maneja persistencia de usuarios
+- **ListaRepository**: Solo maneja persistencia de listas
+
+### Beneficios Obtenidos
+- **SRP**: Cada repositorio tiene una sola responsabilidad
+- **OCP**: ContenidoFactory maneja nuevos tipos sin modificación
+- **DIP**: Repos dependen de abstracciones de dominio
+- Mejor testabilidad y mantenibilidad
+- Eliminación de temporal coupling
+
 ---
 
-## 📊 Diagrama de Clases PlantUML
+## 📊 Diagrama de Clases PlantUML (Simplificado y Organizado)
 
 Copia y pega este código en cualquier herramienta que soporte PlantUML (https://plantuml.com/):
 
 ```plantuml
 @startuml
-' Configuración
+' Configuración UML estándar
 skinparam classAttributeIconSize 0
 skinparam monochrome true
 skinparam linetype ortho
 
 ' ========== DOMINIO ==========
 
-' Clase abstracta Contenido
-abstract class Contenido {
-    - titulo: string
-    - anio: number
-    - sinopsis: string
-    - calificaciones: number[]
-    - vistoPor: Set<Usuario>
-    - youtubeUrl: string
-    + calificar(estrellas: number): void
-    + calificar(estrellas: number, usuario: Usuario): void
-    + marcarVisto(usuario: Usuario): void
-    + get promedioCalificacion(): number
-    + get totalCalificaciones(): number
-    + get totalVistas(): number
-    + get urlYoutube(): string
-    + setUrlYoutube(url: string): void
-    + get sinopsisPublica(): string
-    + get calificacionesArray(): number[]
-    + restaurarCalificaciones(calificaciones: number[]): void
-    {abstract} reproducir(): string
-    {abstract} reproducir(autoplay: boolean): string
-    {abstract} duracionTotal(): number
-    {abstract} get tipo(): string
+package "Dominio" {
+    abstract class Contenido {
+        - titulo: string
+        - anio: number
+        - sinopsis: string
+        - calificaciones: number[]
+        - youtubeUrl: string
+        + calificar(estrellas: number): void
+        + get promedioCalificacion(): number
+        {abstract} reproducir(): string
+        {abstract} duracionTotal(): number
+        {abstract} get tipo(): string
+    }
+
+    class Pelicula {
+        - duracionMin: number
+        + director: string
+        + reproducir(): string
+        + duracionTotal(): number
+        + get tipo(): string
+    }
+
+    class Serie {
+        - temporadas: Temporada[]
+        + creador: string
+        + reproducir(): string
+        + duracionTotal(): number
+        + get tipo(): string
+    }
+
+    class Documental {
+        - duracionMin: number
+        + tema: string
+        + investigador: string
+        + reproducir(): string
+        + duracionTotal(): number
+        + get tipo(): string
+    }
+
+    class Temporada {
+        - numero: number
+        - episodios: Episodio[]
+        + agregarEpisodio(episodio: Episodio): void
+    }
+
+    class Episodio {
+        + numero: number
+        + titulo: string
+        + duracionMin: number
+    }
+
+    class Usuario {
+        - nombre: string
+        - email: string
+        - historial: Contenido[]
+        + ver(contenido: Contenido): string
+    }
+
+    class ListaDeReproduccion {
+        + nombre: string
+        + propietario: Usuario
+        - items: Contenido[]
+        + agregar(contenido: Contenido): void
+    }
+
+    class Catalogo {
+        - items: Contenido[]
+        + agregar(contenido: Contenido): void
+        + buscarPorTitulo(titulo: string): Contenido
+    }
 }
 
-' Clases concretas que extienden Contenido
-class Pelicula {
-    - duracionMin: number
-    + director: string
-    + reproducir(): string
-    + reproducir(autoplay: boolean): string
-    + duracionTotal(): number
-    + get tipo(): string
+' ========== FACTORY METHOD ==========
+
+package "Factory Method" {
+    class ContenidoFactory {
+        + crearPelicula(datos: PeliculaDTO): Pelicula
+        + crearSerie(datos: SerieDTO): Serie
+        + crearDocumental(datos: DocumentalDTO): Documental
+        + crearContenido(tipo: string, datos: any): Contenido
+    }
+
+    interface PeliculaDTO {
+        + titulo: string
+        + anio: number
+        + sinopsis: string
+        + duracionMin: number
+        + director: string
+    }
+
+    interface SerieDTO {
+        + titulo: string
+        + anio: number
+        + sinopsis: string
+        + creador: string
+        + temporadas?: TemporadaDTO[]
+    }
+
+    interface DocumentalDTO {
+        + titulo: string
+        + anio: number
+        + sinopsis: string
+        + duracionMin: number
+        + tema: string
+        + investigador: string
+    }
+
+    interface TemporadaDTO {
+        + numero: number
+        + episodios?: EpisodioDTO[]
+    }
+
+    interface EpisodioDTO {
+        + numero: number
+        + titulo: string
+        + duracionMin: number
+    }
 }
 
-class Serie {
-    - temporadas: Temporada[]
-    + creador: string
-    + agregarTemporada(numero: number): Temporada
-    + reproducir(): string
-    + reproducir(autoplay: boolean): string
-    + duracionTotal(): number
-    + get tipo(): string
-    + get totalTemporadas(): number
-    + obtenerTemporadas(): Temporada[]
+' ========== REPOSITORIOS (SOLID) ==========
+
+package "Repositorios" {
+    class CatalogoRepository {
+        - persistencia: Persistencia
+        + guardar(catalogo: Catalogo): void
+        + cargar(): Catalogo | null
+    }
+
+    class UsuarioRepository {
+        - persistencia: Persistencia
+        + guardar(usuario: Usuario): void
+        + cargar(): Usuario | null
+    }
+
+    class ListaRepository {
+        - persistencia: Persistencia
+        + guardar(lista: ListaDeReproduccion): void
+        + cargar(usuario: Usuario, catalogo: Catalogo): ListaDeReproduccion | null
+    }
+
+    class Persistencia<T> {
+        - clave: string
+        + guardar(datos: T): void
+        + cargar(): T | null
+    }
 }
 
-class Documental {
-    - duracionMin: number
-    + tema: string
-    + investigador: string
-    + reproducir(): string
-    + reproducir(autoplay: boolean): string
-    + duracionTotal(): number
-    + get tipo(): string
-}
+' ========== RELACIONES UML ESTÁNDAR ==========
 
-' Relaciones de herencia
+' Herencia (Generalización)
 Pelicula --|> Contenido
 Serie --|> Contenido
 Documental --|> Contenido
 
-' Clases de composición (Serie - Temporada - Episodio)
-class Temporada {
-    - numero: number
-    - episodios: Episodio[]
-    + agregarEpisodio(episodio: Episodio): void
-    + get duracionMin(): number
-    + getEpisodios(): Episodio[]
-}
+' Composición (ciclo de vida compartido)
+Serie *-- Temporada
+Temporada *-- Episodio
 
-class Episodio {
-    + numero: number
-    + titulo: string
-    + duracionMin: number
-    + youtubeUrl: string
-}
+' Agregación (referencias sin propiedad)
+Catalogo o-- Contenido
+ListaDeReproduccion o-- Contenido
 
-' Composición: Serie tiene Temporadas (ciclo de vida compartido)
-Serie *-- Temporada : composición
-' Composición: Temporada tiene Episodios (ciclo de vida compartido)
-Temporada *-- Episodio : composición
+' Asociación (propiedad)
+ListaDeReproduccion --> Usuario
 
-' Clase Usuario
-class Usuario {
-    - nombre: string
-    - email: string
-    - historial: Contenido[]
-    + ver(contenido: Contenido): string
-    + ver(contenido: Contenido, autoplay: boolean): string
-    + getHistorial(): Contenido[]
-    + getEmail(): string
-}
+' Dependencia (uso)
+Usuario ..> Contenido
 
-' Asociación: Usuario usa Contenido en método ver()
-Usuario ..> Contenido : usa (ver())
+' Dependencia de creación (Factory Method)
+ContenidoFactory ..> Pelicula : <<create>>
+ContenidoFactory ..> Serie : <<create>>
+ContenidoFactory ..> Documental : <<create>>
+ContenidoFactory ..> Episodio : <<create>>
 
-' Asociación débil: Contenido tiene Usuarios que lo vieron
-Contenido "1" *-- "*" Usuario : vistoPor
+' Dependencia (Factory usa DTOs)
+ContenidoFactory ..> PeliculaDTO
+ContenidoFactory ..> SerieDTO
+ContenidoFactory ..> DocumentalDTO
 
-' Clase ListaDeReproduccion
-class ListaDeReproduccion {
-    + nombre: string
-    + propietario: Usuario
-    - items: Contenido[]
-    + agregar(contenido: Contenido): void
-    + quitar(contenido: Contenido): void
-    + contiene(contenido: Contenido): boolean
-    + getItems(): Contenido[]
-    + get totalItems(): number
-}
+' Composición entre DTOs
+SerieDTO *-- TemporadaDTO
+TemporadaDTO *-- EpisodioDTO
 
-' Asociación: ListaDeReproduccion tiene propietario Usuario
-ListaDeReproduccion --> Usuario : propietario
-' Agregación: ListaDeReproduccion contiene Contenido (referencias sin propiedad)
-ListaDeReproduccion o-- Contenido : agregación
-
-' Clase Catalogo
-class Catalogo {
-    - items: Contenido[]
-    + agregar(contenido: Contenido): void
-    + eliminar(contenido: Contenido): boolean
-    + buscarPorTitulo(titulo: string): Contenido
-    + get todos(): Contenido[]
-    + get totalItems(): number
-}
-
-' Agregación: Catalogo contiene Contenido (referencias sin propiedad)
-Catalogo o-- Contenido : agregación
-
-' ========== SERVICIOS ==========
-
-' Servicio Persistencia (genérico)
-class Persistencia<T> {
-    - clave: string
-    + guardar(datos: T): void
-    + cargar(): T | null
-    + eliminar(): void
-    + existe(): boolean
-}
-
-' Servicio Repositorio
-class Repositorio {
-    - persistenciaCatalogo: Persistencia<any[]>
-    - persistenciaUsuario: Persistencia<any>
-    - persistenciaLista: Persistencia<any>
-    + guardarCatalogo(catalogo: Catalogo): void
-    + cargarCatalogo(): Catalogo | null
-    + guardarUsuario(usuario: Usuario): void
-    + cargarUsuario(): Usuario | null
-    + guardarLista(lista: ListaDeReproduccion): void
-    + cargarLista(usuario: Usuario): ListaDeReproduccion | null
-    + limpiarTodo(): void
-    - contenidoToDto(contenido: any): any
-    - dtoToContenido(dto: any): Contenido | null
-    - usuarioToDto(usuario: Usuario): any
-    - dtoToUsuario(dto: any): Usuario
-    - listaToDto(lista: ListaDeReproduccion): any
-    - dtoToLista(dto: any, usuario: Usuario): ListaDeReproduccion
-    - restaurarCalificaciones(contenido: any, calificaciones: number[]): void
-}
-
-' Dependencia: Repositorio usa Persistencia
-Repositorio ..> Persistencia : usa
-' Dependencia: Repositorio usa clases de dominio
-Repositorio ..> Catalogo : usa
-Repositorio ..> Usuario : usa
-Repositorio ..> ListaDeReproduccion : usa
-Repositorio ..> Contenido : usa
-
-' Servicio ContenidoFactory (Factory Method)
-class ContenidoFactory {
-    + {static} crearPelicula(datos: DatosPelicula): Pelicula
-    + {static} crearSerie(datos: DatosSerie): Serie
-    + {static} crearDocumental(datos: DatosDocumental): Documental
-    + {static} crearContenido(tipo: string, datos: any): Contenido
-}
-
-' Interfaces de datos para el Factory
-interface DatosPelicula {
-    + titulo: string
-    + anio: number
-    + sinopsis: string
-    + duracionMin: number
-    + director: string
-    + youtubeUrl?: string
-}
-
-interface DatosSerie {
-    + titulo: string
-    + anio: number
-    + sinopsis: string
-    + creador: string
-    + youtubeUrl?: string
-    + temporadas?: DatosTemporada[]
-}
-
-interface DatosDocumental {
-    + titulo: string
-    + anio: number
-    + sinopsis: string
-    + duracionMin: number
-    + tema: string
-    + investigador: string
-    + youtubeUrl?: string
-}
-
-interface DatosTemporada {
-    + numero: number
-    + episodios?: DatosEpisodio[]
-}
-
-interface DatosEpisodio {
-    + numero: number
-    + titulo: string
-    + duracionMin: number
-    + youtubeUrl?: string
-}
-
-' Dependencia: ContenidoFactory crea instancias de clases concretas
-ContenidoFactory ..> Pelicula : crea
-ContenidoFactory ..> Serie : crea
-ContenidoFactory ..> Documental : crea
-ContenidoFactory ..> Episodio : crea
-' Dependencia: ContenidoFactory usa interfaces de datos
-ContenidoFactory ..> DatosPelicula : usa
-ContenidoFactory ..> DatosSerie : usa
-ContenidoFactory ..> DatosDocumental : usa
-ContenidoFactory ..> DatosTemporada : usa
-ContenidoFactory ..> DatosEpisodio : usa
-
-' Dependencia: Repositorio usa ContenidoFactory
-Repositorio ..> ContenidoFactory : usa
-
-' ========== RELACIONES ENTRE INTERFACES ==========
-
-DatosSerie ..> DatosTemporada : contiene
-DatosTemporada ..> DatosEpisodio : contiene
+' Dependencia (Repositorios)
+CatalogoRepository ..> Catalogo
+CatalogoRepository ..> Persistencia
+UsuarioRepository ..> Usuario
+UsuarioRepository ..> Persistencia
+ListaRepository ..> ListaDeReproduccion
+ListaRepository ..> Usuario
+ListaRepository ..> Catalogo
+ListaRepository ..> Persistencia
 
 @enduml
 ```
 
-### Leyenda del Diagrama
+### Leyenda del Diagrama UML
 
-| Símbolo | Relación | Significado |
-|---------|----------|-------------|
-| `--|>` | Herencia | Subclase extiende superclase |
+| Símbolo | Relación UML | Significado |
+|---------|--------------|-------------|
+| `--|>` | Generalización (Herencia) | Subclase extiende superclase |
 | `*--` | Composición | Ciclo de vida compartido (parte muere si el todo muere) |
 | `o--` | Agregación | Referencias sin propiedad (parte puede existir independientemente) |
-| `-->` | Asociación | Relación débil entre clases |
-| `..>` | Dependencia | Clase usa otra pero no es miembro |
-| `implements` | Implementación | Clase implementa interfaz |
+| `-->` | Asociación | Relación semántica entre clases |
+| `..>` | Dependencia | Clase depende de otra |
+| `<<create>>` | Estereotipo | Relación de creación |
 
-### Notas sobre las Relaciones
+### Organización del Diagrama
 
-1. **Herencia**: `Pelicula`, `Serie`, `Documental` extienden `Contenido` (clase abstracta)
-2. **Composición**: `Serie` compone `Temporada`, `Temporada` compone `Episodio` (ciclo de vida compartido)
-3. **Agregación**: `Catalogo` y `ListaDeReproduccion` agregan `Contenido` (referencias sin propiedad)
-4. **Asociación**: `Usuario` se asocia con `Contenido` a través del historial y método `ver()`
-5. **Dependencia**: `Repositorio` depende de `Persistencia`, `ContenidoFactory` y clases de dominio
-6. **Factory Method**: `ContenidoFactory` depende de las clases concretas que crea y de las interfaces de datos
+1. **Paquete Dominio**: Clases de negocio (Contenido, Usuario, Catalogo, etc.)
+2. **Paquete Factory Method**: `ContenidoFactory` y sus interfaces DTO
+3. **Paquete Repositorios**: Repositorios especializados siguiendo principios SOLID
+
+### Relaciones UML Implementadas
+
+- **Generalización**: `Pelicula`, `Serie`, `Documental` generalizan `Contenido`
+- **Composición**: `Serie` compone `Temporada`, `Temporada` compone `Episodio`
+- **Agregación**: `Catalogo` y `ListaDeReproduccion` agregan `Contenido`
+- **Asociación**: `ListaDeReproduccion` se asocia con `Usuario` (propiedad)
+- **Dependencia**: `Usuario` depende de `Contenido` (método `ver()`)
+- **Factory Method**: `ContenidoFactory` crea instancias con estereotipo `<<create>>`
+- **SOLID**: Repositorios dependen de abstracciones de dominio (DIP)

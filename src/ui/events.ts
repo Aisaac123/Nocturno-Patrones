@@ -5,8 +5,10 @@ import { Contenido } from '../domain/Contenido';
 import { Usuario } from '../domain/Usuario';
 import { Catalogo } from '../domain/Catalogo';
 import { ListaDeReproduccion } from '../domain/ListaDeReproduccion';
-import { Repositorio } from '../services/repositorio';
-import { ContenidoFactory, DatosPelicula, DatosSerie, DatosDocumental } from '../services/contenidoFactory';
+import { CatalogoRepository } from '../services/repositorios/catalogoRepository';
+import { UsuarioRepository } from '../services/repositorios/usuarioRepository';
+import { ListaRepository } from '../services/repositorios/listaRepository';
+import { ContenidoFactory, PeliculaDTO, SerieDTO, DocumentalDTO } from '../services/contenidoFactory';
 
 interface DatosAplicacion {
     usuario: Usuario;
@@ -26,13 +28,13 @@ interface Handlers {
     onAgregarDocumental: (event: Event) => void;
 }
 
-export function setupEventListeners(datos: DatosAplicacion, repositorio: Repositorio): Handlers {
+export function setupEventListeners(datos: DatosAplicacion, catalogoRepo: CatalogoRepository, usuarioRepo: UsuarioRepository, listaRepo: ListaRepository): Handlers {
     const { usuario, catalogo, miLista } = datos;
 
     const guardarTodo = () => {
-        repositorio.guardarCatalogo(catalogo);
-        repositorio.guardarUsuario(usuario);
-        repositorio.guardarLista(miLista);
+        catalogoRepo.guardar(catalogo);
+        usuarioRepo.guardar(usuario);
+        listaRepo.guardar(miLista);
         log('PERSISTENCIA', 'Estado guardado en localStorage');
     };
 
@@ -127,7 +129,7 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         const youtubeUrl = formData.get('youtubeUrl') as string;
 
         try {
-            const datosPelicula: DatosPelicula = {
+            const datosPelicula: PeliculaDTO = {
                 titulo,
                 anio,
                 sinopsis,
@@ -165,7 +167,7 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         const temporadasData = (window as any).temporadasTemporales || [];
 
         try {
-            const datosSerie: DatosSerie = {
+            const datosSerie: SerieDTO = {
                 titulo,
                 anio,
                 sinopsis,
@@ -205,7 +207,7 @@ export function setupEventListeners(datos: DatosAplicacion, repositorio: Reposit
         const youtubeUrl = formData.get('youtubeUrl') as string;
 
         try {
-            const datosDocumental: DatosDocumental = {
+            const datosDocumental: DocumentalDTO = {
                 titulo,
                 anio,
                 sinopsis,

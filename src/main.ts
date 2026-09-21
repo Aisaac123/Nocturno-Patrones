@@ -2,22 +2,27 @@ import { crearDatos } from './seed';
 import { renderCatalogo, renderMiLista } from './ui/renderers';
 import { setupEventListeners, switchTab, actualizarPreviewEpisodios, actualizarPreviewTemporadas } from './ui/events';
 import { log, limpiarBitacora } from './utils/logger';
-import { Repositorio } from './services/repositorio';
+import { CatalogoRepository } from './services/repositorios/catalogoRepository';
+import { UsuarioRepository } from './services/repositorios/usuarioRepository';
+import { ListaRepository } from './services/repositorios/listaRepository';
 
 console.log('Nocturno - Iniciando aplicación...');
 
 function main(): void {
     limpiarBitacora();
 
-    const repositorio = new Repositorio();
-    const datos = crearDatos(repositorio);
+    const catalogoRepo = new CatalogoRepository();
+    const usuarioRepo = new UsuarioRepository();
+    const listaRepo = new ListaRepository();
+
+    const datos = crearDatos(catalogoRepo, usuarioRepo, listaRepo);
     const { usuario, catalogo, miLista } = datos;
 
     log('PERSISTENCIA', 'Datos cargados desde localStorage');
     log('HERENCIA', 'Creando instancias de subclases (Pelicula, Serie, Documental)');
     log('COMPOSICIÓN', 'Serie creada con Temporadas que viven solo dentro de ella');
 
-    const handlers = setupEventListeners(datos, repositorio);
+    const handlers = setupEventListeners(datos, catalogoRepo, usuarioRepo, listaRepo);
 
     renderCatalogo(
         catalogo,

@@ -27,7 +27,7 @@ export class ContenidoFactory {
      * @param datos - Objeto con los datos requeridos para crear una Pelicula
      * @returns Instancia de Pelicula
      */
-    static crearPelicula(datos: DatosPelicula): Pelicula {
+    static crearPelicula(datos: PeliculaDTO): Pelicula {
         return new Pelicula(
             datos.titulo,
             datos.anio,
@@ -43,7 +43,7 @@ export class ContenidoFactory {
      * @param datos - Objeto con los datos requeridos para crear una Serie
      * @returns Instancia de Serie
      */
-    static crearSerie(datos: DatosSerie): Serie {
+    static crearSerie(datos: SerieDTO): Serie {
         const serie = new Serie(
             datos.titulo,
             datos.anio,
@@ -78,7 +78,7 @@ export class ContenidoFactory {
      * @param datos - Objeto con los datos requeridos para crear un Documental
      * @returns Instancia de Documental
      */
-    static crearDocumental(datos: DatosDocumental): Documental {
+    static crearDocumental(datos: DocumentalDTO): Documental {
         return new Documental(
             datos.titulo,
             datos.anio,
@@ -101,11 +101,11 @@ export class ContenidoFactory {
     static crearContenido(tipo: string, datos: any): Contenido {
         switch (tipo) {
             case 'Pelicula':
-                return this.crearPelicula(datos as DatosPelicula);
+                return this.crearPelicula(datos as PeliculaDTO);
             case 'Serie':
-                return this.crearSerie(datos as DatosSerie);
+                return this.crearSerie(datos as SerieDTO);
             case 'Documental':
-                return this.crearDocumental(datos as DatosDocumental);
+                return this.crearDocumental(datos as DocumentalDTO);
             default:
                 throw new Error(`Tipo de contenido no válido: ${tipo}`);
         }
@@ -113,10 +113,10 @@ export class ContenidoFactory {
 }
 
 /**
- * Interfaces para los datos de creación de cada tipo de contenido
+ * Interfaces DTO (Data Transfer Objects) para los datos de creación de cada tipo de contenido
  * Esto proporciona type safety y documentación clara de qué datos se requieren
  */
-export interface DatosPelicula {
+export interface PeliculaDTO {
     titulo: string;
     anio: number;
     sinopsis: string;
@@ -125,28 +125,28 @@ export interface DatosPelicula {
     youtubeUrl?: string;
 }
 
-export interface DatosSerie {
+export interface SerieDTO {
     titulo: string;
     anio: number;
     sinopsis: string;
     creador: string;
     youtubeUrl?: string;
-    temporadas?: DatosTemporada[];
+    temporadas?: TemporadaDTO[];
 }
 
-export interface DatosTemporada {
+export interface TemporadaDTO {
     numero: number;
-    episodios?: DatosEpisodio[];
+    episodios?: EpisodioDTO[];
 }
 
-export interface DatosEpisodio {
+export interface EpisodioDTO {
     numero: number;
     titulo: string;
     duracionMin: number;
     youtubeUrl?: string;
 }
 
-export interface DatosDocumental {
+export interface DocumentalDTO {
     titulo: string;
     anio: number;
     sinopsis: string;
