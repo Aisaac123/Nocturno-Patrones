@@ -330,7 +330,7 @@ package "Factory Method" {
         + crearContenido(tipo: string, datos: any): Contenido
     }
 
-    interface PeliculaDTO {
+    class PeliculaDTO {
         + titulo: string
         + anio: number
         + sinopsis: string
@@ -338,7 +338,7 @@ package "Factory Method" {
         + director: string
     }
 
-    interface SerieDTO {
+    class SerieDTO {
         + titulo: string
         + anio: number
         + sinopsis: string
@@ -346,7 +346,7 @@ package "Factory Method" {
         + temporadas?: TemporadaDTO[]
     }
 
-    interface DocumentalDTO {
+    class DocumentalDTO {
         + titulo: string
         + anio: number
         + sinopsis: string
@@ -355,12 +355,12 @@ package "Factory Method" {
         + investigador: string
     }
 
-    interface TemporadaDTO {
+    class TemporadaDTO {
         + numero: number
         + episodios?: EpisodioDTO[]
     }
 
-    interface EpisodioDTO {
+    class EpisodioDTO {
         + numero: number
         + titulo: string
         + duracionMin: number
@@ -397,41 +397,41 @@ package "Repositorios" {
 
 ' ========== RELACIONES UML ESTÁNDAR ==========
 
-' Herencia (Generalización)
+' Generalización (Herencia): Pelicula, Serie, Documental extienden Contenido
 Pelicula --|> Contenido
 Serie --|> Contenido
 Documental --|> Contenido
 
-' Composición (ciclo de vida compartido)
+' Composición: Serie compone Temporada, Temporada compone Episodio (ciclo de vida compartido)
 Serie *-- Temporada
 Temporada *-- Episodio
 
-' Agregación (referencias sin propiedad)
+' Agregación: Catalogo y ListaDeReproduccion agregan Contenido (referencias sin propiedad)
 Catalogo o-- Contenido
 ListaDeReproduccion o-- Contenido
 
-' Asociación (propiedad)
+' Asociación: ListaDeReproducción tiene propietario Usuario
 ListaDeReproduccion --> Usuario
 
-' Dependencia (uso)
+' Dependencia: Usuario usa Contenido en método ver()
 Usuario ..> Contenido
 
-' Dependencia de creación (Factory Method)
+' Dependencia de creación: ContenidoFactory crea instancias de clases concretas
 ContenidoFactory ..> Pelicula : <<create>>
 ContenidoFactory ..> Serie : <<create>>
 ContenidoFactory ..> Documental : <<create>>
 ContenidoFactory ..> Episodio : <<create>>
 
-' Dependencia (Factory usa DTOs)
+' Dependencia: ContenidoFactory usa DTOs como parámetros de entrada
 ContenidoFactory ..> PeliculaDTO
 ContenidoFactory ..> SerieDTO
 ContenidoFactory ..> DocumentalDTO
 
-' Composición entre DTOs
+' Composición entre DTOs: SerieDTO contiene TemporadaDTO, TemporadaDTO contiene EpisodioDTO
 SerieDTO *-- TemporadaDTO
 TemporadaDTO *-- EpisodioDTO
 
-' Dependencia (Repositorios)
+' Dependencia: Repositorios dependen de clases de dominio y Persistencia
 CatalogoRepository ..> Catalogo
 CatalogoRepository ..> Persistencia
 UsuarioRepository ..> Usuario
